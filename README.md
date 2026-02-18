@@ -6,9 +6,9 @@ This is not an event platform. We don't host, organise, or own any events. This 
 
 **Live:** [events.chepaldin.com](https://events.chepaldin.com)
 
-## Design Principles
+## The Channellable Design Principles
 
-*If a non-technical events organiser can use it, it ships. If they can't, it doesn't.*
+*If a non-technical events organiser such as Channelle can use it, it ships. If they can't, it doesn't.*
 
 Everything on this site is designed to be intuitive enough that anyone, regardless of technical background, can open it, find what they need, and get on with their day. No logins, no accounts, no onboarding. Just links.
 
