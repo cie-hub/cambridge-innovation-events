@@ -25,7 +25,7 @@ If you are an event organiser and want your page removed from this hub, open an 
 This project scrapes publicly available event metadata (titles, dates, links, descriptions) from the websites listed below. It is a non-commercial, volunteer community effort.
 
 - No copyrighted content is reproduced. We store only metadata and link back to the original source.
-- This project does not check or enforce robots.txt. Scrapers identify themselves with a custom `User-Agent` header (`CambridgeInnovationEvents/1.0`).
+- Scrapers identify themselves with a custom `User-Agent` header (`CambridgeInnovationEvents/1.0`).
 - Scrapers run once per day with low request volume (one request per source).
 - If you are an event organiser and would like your page removed, open an issue and we will remove it promptly.
 
