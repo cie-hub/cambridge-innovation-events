@@ -18,6 +18,12 @@
   transition: opacity 0.2s ease, color 0.2s ease;
 }
 
+.about-trigger__beta {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--color-pink);
+}
+
 .about-trigger:hover {
   opacity: 1;
   color: var(--color-primary);
