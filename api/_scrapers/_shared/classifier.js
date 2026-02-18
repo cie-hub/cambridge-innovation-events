@@ -1,3 +1,37 @@
+/**
+ * Event Category Classifier
+ *
+ * Every event source classifies things differently. Eventbrite has tags,
+ * Meetup has topics, some sources have nothing at all. Rather than
+ * hard-coding a mapping for each source (the horror), this classifier
+ * uses TF-IDF cosine similarity to figure out the best-fit categories
+ * from the event's own title and description.
+ *
+ * How it works:
+ * Each category in TAXONOMY below has a bag of seed terms. When an event
+ * comes in, we tokenise its title + description, build a TF-IDF vector,
+ * and measure how close it is to each category's seed vector using cosine
+ * similarity. If the similarity score is above MIN_SIMILARITY (0.1), the
+ * category is a candidate. We take the top MAX_CATEGORIES (2) matches.
+ *
+ * This means categories can be added or removed just by editing TAXONOMY.
+ * No other code changes needed. The trade-off is precision: some events
+ * will get slightly wrong categories. That's fine. We'd rather have a
+ * reasonable guess than no category at all, and we'd rather keep the data
+ * centralised than scatter hard-coded mappings across 25 scrapers.
+ *
+ * To add a new category:
+ * 1. Add an entry to TAXONOMY: 'Category Name': 'space separated seed terms'
+ * 2. Pick 10-15 terms that are distinctive to that category
+ * 3. Avoid generic words that overlap with other categories (overfitting)
+ * 4. Add a test in classifier.test.js to verify classification
+ * 5. Run: npx vitest run api/_scrapers/_shared/classifier.test.js
+ *
+ * Tuning:
+ * - MIN_SIMILARITY (0.1): Lower = more matches, higher = stricter
+ * - MAX_CATEGORIES (2): Each event gets at most this many categories
+ * - The title is weighted double (concatenated twice) for stronger signal
+ */
 const TAXONOMY = {
   'AI & Data': 'artificial intelligence machine learning deep learning neural network llm data science nlp computer vision algorithm ai model training dataset',
   'Biotech & Health': 'biotech life sciences healthcare biomedical pharmaceutical genomics cancer research clinical therapeutics medicine drug biology',
