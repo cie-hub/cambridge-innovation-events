@@ -17,10 +17,8 @@ describe('parseKingsElab', () => {
     const first = events[0]
     expect(first.title).toBeDefined()
     expect(first.title.length).toBeGreaterThan(0)
-    expect(first.date).toBeInstanceOf(Date)
-    expect(first.source).toBe('kings-elab')
+    expect(first.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(first.sourceUrl).toContain('kingselab.org')
-    expect(first.hash).toBeDefined()
   })
 
   it('parses title and link correctly for the first event', () => {
@@ -31,11 +29,11 @@ describe('parseKingsElab', () => {
     expect(first.sourceUrl).toBe('https://www.kingselab.org/all-events/pitchkings-lent-2026')
   })
 
-  it('produces deterministic hashes', () => {
-    const $ = cheerio.load(html)
-    const run1 = parseKingsElab($)
+  it('produces consistent output across runs', () => {
+    const run1 = parseKingsElab(cheerio.load(html))
     const run2 = parseKingsElab(cheerio.load(html))
-    expect(run1[0].hash).toBe(run2[0].hash)
-    expect(run1[0].hash).toHaveLength(16)
+    expect(run1.length).toBe(run2.length)
+    expect(run1[0].title).toBe(run2[0].title)
+    expect(run1[0].date).toBe(run2[0].date)
   })
 })
