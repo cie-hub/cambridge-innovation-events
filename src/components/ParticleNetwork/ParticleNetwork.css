@@ -1,0 +1,45 @@
+.particle-network {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.app-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  will-change: transform;
+  background: linear-gradient(
+    135deg,
+    rgba(110, 120, 255, 0.03) 0%,
+    rgba(255, 255, 255, 1) 30%,
+    rgba(230, 66, 152, 0.03) 60%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 20s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+[data-theme="dark"] .app-background {
+  background: linear-gradient(
+    135deg,
+    rgba(110, 120, 255, 0.06) 0%,
+    rgba(26, 26, 46, 1) 30%,
+    rgba(230, 66, 152, 0.06) 60%,
+    rgba(26, 26, 46, 1) 100%
+  );
+}

@@ -1,0 +1,56 @@
+{
+  "events": [
+    {
+      "title": "Cambridge AI Meetup",
+      "start_date": "2026-03-01 18:00:00",
+      "end_date": "2026-03-01 20:00:00",
+      "url": "https://www.innovatecambridge.com/event/cambridge-ai-meetup/",
+      "description": "<p>A meetup for AI enthusiasts in Cambridge.</p>",
+      "venue": { "venue": "The Glasshouse" },
+      "image": { "url": "https://www.innovatecambridge.com/wp-content/uploads/ai-meetup.jpg" },
+      "categories": [
+        { "name": "Open To All", "slug": "open-to-all" },
+        { "name": "AI", "slug": "ai" }
+      ]
+    },
+    {
+      "title": "Members Coffee Morning",
+      "start_date": "2026-03-02 09:00:00",
+      "end_date": "2026-03-02 10:00:00",
+      "url": "https://www.innovatecambridge.com/event/members-coffee/",
+      "description": "<p>Casual coffee morning for Glasshouse members.</p>",
+      "venue": { "venue": "Open Space" },
+      "image": null,
+      "categories": [
+        { "name": "Open to Members", "slug": "open-to-members" },
+        { "name": "Networking", "slug": "networking" }
+      ]
+    },
+    {
+      "title": "Board Strategy Session",
+      "start_date": "2026-03-03 14:00:00",
+      "end_date": "2026-03-03 16:00:00",
+      "url": "https://www.innovatecambridge.com/event/board-strategy/",
+      "description": "<p>Internal planning workshop.</p>",
+      "venue": { "venue": "Boardroom" },
+      "image": null,
+      "categories": [
+        { "name": "Closed Meeting", "slug": "closed-meeting" }
+      ]
+    },
+    {
+      "title": "Private Partner Reception",
+      "start_date": "2026-03-04 17:00:00",
+      "end_date": "2026-03-04 19:00:00",
+      "url": "https://www.innovatecambridge.com/event/partner-reception/",
+      "description": "<p>Reception for key partners.</p>",
+      "venue": { "venue": "The Glasshouse" },
+      "image": null,
+      "categories": [
+        { "name": "Closed Event", "slug": "closed-event" }
+      ]
+    }
+  ],
+  "total": 4,
+  "total_pages": 1
+}

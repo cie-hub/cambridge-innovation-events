@@ -1,0 +1,64 @@
+:root {
+  /* Brand colors */
+  --color-primary: #6E78FF;
+  --color-pink: #E64298;
+
+  /* Backgrounds */
+  --color-bg: #FFFFFF;
+  --color-surface: #FAFAFA;
+
+  /* Text */
+  --color-text: #222222;
+  --color-text-secondary: #444444;
+
+  /* Decorative */
+  --color-border: rgba(110, 120, 255, 0.15);
+  --color-tag-bg: rgba(110, 120, 255, 0.1);
+
+  /* Glass & surfaces */
+  --color-glass: rgba(255, 255, 255, 0.97);
+  --color-card-bg: rgba(250, 250, 250, 0.97);
+  --color-overlay: rgba(0, 0, 0, 0.25);
+  --color-on-accent: #fff;
+  --color-track: rgba(0, 0, 0, 0.04);
+  --color-now: #e53e3e;
+
+  /* Typography */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+
+  /* Shape */
+  --radius: 8px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 2px 12px rgba(110, 120, 255, 0.06);
+  --shadow-card-hover: 0 4px 24px rgba(110, 120, 255, 0.12), 0 1.5px 8px rgba(230, 66, 152, 0.06);
+
+  /* Transitions */
+  --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --color-bg: #1a1a2e;
+  --color-surface: #16213e;
+  --color-text: #e8e8e8;
+  --color-text-secondary: #a0a0b0;
+  --color-border: rgba(110, 120, 255, 0.25);
+  --color-tag-bg: rgba(110, 120, 255, 0.2);
+  --color-glass: rgba(22, 33, 62, 0.95);
+  --color-card-bg: rgba(22, 33, 62, 0.92);
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-on-accent: #fff;
+  --color-track: rgba(255, 255, 255, 0.08);
+  --color-now: #fc5c5c;
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 4px 24px rgba(110, 120, 255, 0.2), 0 1.5px 8px rgba(230, 66, 152, 0.1);
+}
