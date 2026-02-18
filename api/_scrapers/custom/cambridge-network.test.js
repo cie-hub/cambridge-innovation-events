@@ -17,10 +17,8 @@ describe('parseCambridgeNetwork', () => {
     const first = events[0]
     expect(first.title).toBeDefined()
     expect(first.title.length).toBeGreaterThan(0)
-    expect(first.date).toBeInstanceOf(Date)
-    expect(first.source).toBe('cambridge-network')
+    expect(first.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(first.sourceUrl).toContain('cambridgenetwork.co.uk')
-    expect(first.hash).toBeDefined()
   })
 
   it('extracts the correct number of events from the listing', () => {
@@ -41,7 +39,7 @@ describe('parseCambridgeNetwork', () => {
     const $ = cheerio.load(html)
     const events = parseCambridgeNetwork($)
     const first = events[0]
-    expect(first.date.toISOString().slice(0, 10)).toBe('2026-02-17')
+    expect(first.date).toBe('2026-02-17')
     expect(first.endDate).toBeNull()
   })
 
@@ -50,9 +48,8 @@ describe('parseCambridgeNetwork', () => {
     const events = parseCambridgeNetwork($)
     const rangeEvent = events.find(e => e.title === 'Real Estate Analyst')
     expect(rangeEvent).toBeDefined()
-    expect(rangeEvent.date.toISOString().slice(0, 10)).toBe('2026-02-23')
-    expect(rangeEvent.endDate).toBeInstanceOf(Date)
-    expect(rangeEvent.endDate.toISOString().slice(0, 10)).toBe('2026-02-24')
+    expect(rangeEvent.date).toBe('2026-02-23')
+    expect(rangeEvent.endDate).toBe('2026-02-24')
   })
 
   it('extracts description text', () => {
@@ -72,11 +69,11 @@ describe('parseCambridgeNetwork', () => {
     expect(multiSector.categories).toContain('Information, Technology & Telecoms')
   })
 
-  it('produces deterministic hashes', () => {
-    const $ = cheerio.load(html)
-    const run1 = parseCambridgeNetwork($)
+  it('produces consistent output across runs', () => {
+    const run1 = parseCambridgeNetwork(cheerio.load(html))
     const run2 = parseCambridgeNetwork(cheerio.load(html))
-    expect(run1[0].hash).toBe(run2[0].hash)
-    expect(run1[0].hash).toHaveLength(16)
+    expect(run1.length).toBe(run2.length)
+    expect(run1[0].title).toBe(run2[0].title)
+    expect(run1[0].date).toBe(run2[0].date)
   })
 })
