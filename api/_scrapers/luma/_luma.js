@@ -116,7 +116,7 @@ export async function scrapeLumaPage(url, source) {
   // Org page: extract calendar ID from __NEXT_DATA__, then use API
   const $ = await fetchPage(url)
   const nextDataScript = $('#__NEXT_DATA__').html()
-  if (!nextDataScript) return []
+  if (!nextDataScript) throw new Error(`Luma org page missing __NEXT_DATA__ script — page structure may have changed`)
 
   try {
     const data = JSON.parse(nextDataScript)

@@ -54,7 +54,7 @@ export async function scrapeVentureCafe() {
   })
   if (!res.ok) throw new Error(`Venture Cafe fetch failed: ${res.status}`)
   const data = await res.json()
-  if (!data.events || !Array.isArray(data.events)) return []
+  if (!data.events || !Array.isArray(data.events)) throw new Error('Venture Cafe API response missing events array — Tribe Events schema may have changed')
 
   const events = data.events.map((evt) => {
     const startDate = new Date(evt.start_date)

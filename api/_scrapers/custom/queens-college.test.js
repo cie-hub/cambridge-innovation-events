@@ -10,28 +10,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const html = readFileSync(resolve(__dirname, '_fixtures/queens-college.html'), 'utf-8')
 
 describe('parseQueensCollege', () => {
-  it('returns an array from fixture HTML', () => {
+  it('throws when fixture HTML is missing appsWarmupData marker', () => {
     const $ = cheerio.load(html)
-    const events = parseQueensCollege($)
-    expect(Array.isArray(events)).toBe(true)
+    expect(() => parseQueensCollege($)).toThrow('appsWarmupData')
   })
 
-  it('handles informational page without structured events gracefully', () => {
-    const $ = cheerio.load(html)
-    const events = parseQueensCollege($)
-    events.forEach(event => {
-      expect(event.source).toBe('queens-college')
-      expect(event.hash).toHaveLength(16)
-    })
+  it('throws on empty HTML without Wix warmup data', () => {
+    const $ = cheerio.load('<html><body></body></html>')
+    expect(() => parseQueensCollege($)).toThrow('appsWarmupData')
   })
 
-  it('returns events with required fields if any are found', () => {
-    const $ = cheerio.load(html)
-    const events = parseQueensCollege($)
-    events.forEach(event => {
-      expect(event.title.length).toBeGreaterThan(0)
-      expect(event.date).toBeInstanceOf(Date)
-      expect(event.sourceUrl).toBeDefined()
-    })
+  it('throws when Wix app ID is missing from warmup data', () => {
+    const fakeHtml = '<html><script>"appsWarmupData":{"other-app":{}}</script></html>'
+    const $ = cheerio.load(fakeHtml)
+    expect(() => parseQueensCollege($)).toThrow('Wix app ID')
   })
 })

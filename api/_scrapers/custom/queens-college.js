@@ -9,7 +9,7 @@ const WIX_EVENTS_APP_ID = '140603ad-af8d-84a5-2c80-a0f60cb47351'
 function parseWixEventsFromHtml(html) {
   const marker = '"appsWarmupData":'
   const idx = html.indexOf(marker)
-  if (idx === -1) return []
+  if (idx === -1) throw new Error('Queens College page missing appsWarmupData marker — Wix page structure may have changed')
 
   const start = idx + marker.length
   let depth = 0
@@ -31,7 +31,7 @@ function parseWixEventsFromHtml(html) {
   }
 
   const appData = warmupData[WIX_EVENTS_APP_ID]
-  if (!appData) return []
+  if (!appData) throw new Error(`Queens College Wix app ID ${WIX_EVENTS_APP_ID} not found in warmup data — app may have been reinstalled`)
 
   const events = []
 

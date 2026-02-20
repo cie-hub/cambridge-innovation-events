@@ -20,7 +20,7 @@ export async function scrapeEventbriteCambridge() {
   // Extract __SERVER_DATA__ JSON via brace-counting (too large for regex)
   const marker = 'window.__SERVER_DATA__ = '
   const idx = html.indexOf(marker)
-  if (idx === -1) return []
+  if (idx === -1) throw new Error('Eventbrite page missing __SERVER_DATA__ marker — page structure may have changed')
 
   const start = idx + marker.length
   let depth = 0
@@ -39,7 +39,7 @@ export async function scrapeEventbriteCambridge() {
   }
 
   const results = serverData?.search_data?.events?.results
-  if (!Array.isArray(results)) return []
+  if (!Array.isArray(results)) throw new Error('Eventbrite __SERVER_DATA__ schema changed — search_data.events.results is not an array')
 
   const events = []
   for (const evt of results) {
