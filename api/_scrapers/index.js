@@ -24,6 +24,7 @@ import { scrapeIfmEvents } from './custom/ifm-events.js'
 import { scrapeCambridgeEnterprise } from './custom/cambridge-enterprise.js'
 import { scrapeMeetupCambridge } from './meetup/meetup-cambridge.js'
 import { scrapeWolfsonCollege } from './custom/wolfson-college.js'
+import { scrapeCambridgeThinklab } from './ajax/cambridge-thinklab.js'
 
 export const scrapers = {
   'cambridge-network': scrapeCambridgeNetwork,
@@ -52,4 +53,5 @@ export const scrapers = {
   'cambridge-enterprise': scrapeCambridgeEnterprise,
   'meetup-cambridge': scrapeMeetupCambridge,
   'wolfson-college': scrapeWolfsonCollege,
+  'cambridge-thinklab': scrapeCambridgeThinklab,
 }

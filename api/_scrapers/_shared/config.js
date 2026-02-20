@@ -3,7 +3,7 @@
  * Keys are batch indices, values are arrays of source slugs.
  */
 export const batches = {
-  0: ['kings-elab', 'judge-business-school', 'queens-college'],
+  0: ['kings-elab', 'judge-business-school', 'queens-college', 'cambridge-thinklab'],
   1: ['bradfield-centre', 'st-johns', 'cambridge-science-park', 'eagle-labs'],
   2: ['innovate-cambridge', 'cambridge-network', 'ideaspace'],
   3: ['venture-cafe', 'allia', 'cambridge-wireless'],
@@ -142,5 +142,10 @@ export const sources = {
     name: 'Wolfson College Entrepreneurship Hub',
     url: 'https://www.wolfson.cam.ac.uk/whats/events-feed',
     description: 'Wolfson Entrepreneurship Society workshops, competitions, and venture events',
+  },
+  'cambridge-thinklab': {
+    name: 'Cambridge ThinkLab',
+    url: 'https://www.thinklab.strategic-partnerships.admin.cam.ac.uk/events/',
+    description: 'University of Cambridge ThinkLab research impact events and talks',
   },
 }
