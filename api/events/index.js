@@ -1,4 +1,5 @@
 import { getDb } from '../_lib/db.js'
+import { dedup } from '../_lib/dedup.js'
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end()
@@ -11,5 +12,5 @@ export default async function handler(req, res) {
     .toArray()
 
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60')
-  return res.status(200).json({ events })
+  return res.status(200).json({ events: dedup(events) })
 }
