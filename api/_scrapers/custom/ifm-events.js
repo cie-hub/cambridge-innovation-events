@@ -1,6 +1,7 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
 import { parseDayMonthYear } from '../_shared/dates.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const EVENTS_URL = 'https://www.ifm.eng.cam.ac.uk/events/'
 const SOURCE = 'ifm-events'
@@ -29,6 +30,8 @@ export function parseIfmEvents($) {
     const imgSrc = card.find('div.event-image img').attr('src')
     const imageUrl = imgSrc && imgSrc.startsWith('http') ? imgSrc : null
 
+    const { cost, access } = inferCostAccess(description)
+
     events.push(
       normalizeEvent({
         title,
@@ -38,6 +41,8 @@ export function parseIfmEvents($) {
         sourceUrl,
         imageUrl,
         categories: ['Innovation'],
+        cost,
+        access,
       })
     )
   })

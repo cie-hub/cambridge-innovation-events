@@ -70,7 +70,7 @@ export function parseCambridgeWireless($) {
     })
 
     const badge = card.find('.event-badge').text().trim()
-    const cost = badge && badge.toLowerCase() === 'free' ? 'Free' : null
+    const cost = badge ? (/free/i.test(badge) ? 'Free' : badge) : null
 
     events.push(
       normalizeEvent({
@@ -84,6 +84,7 @@ export function parseCambridgeWireless($) {
         categories,
         imageUrl,
         cost,
+        access: 'Registration Required',
       })
     )
   })

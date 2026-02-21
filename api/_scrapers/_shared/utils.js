@@ -91,7 +91,7 @@ export function normalizeEvent({
   time,
   imageUrl,
 }) {
-  const validated = validateEvent({ title, description, date, source, location, time, imageUrl, sourceUrl }, source)
+  const validated = validateEvent({ title, description, date, source, location, time, imageUrl, sourceUrl, access }, source)
   if (!validated) return null
 
   const dateStr = typeof date === 'string' ? date.split('T')[0] : date

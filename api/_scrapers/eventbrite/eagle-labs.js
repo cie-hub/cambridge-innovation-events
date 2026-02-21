@@ -55,6 +55,7 @@ export function parseEagleLabs($) {
         source: SOURCE,
         sourceUrl,
         imageUrl,
+        access: 'Registration Required',
       })
     )
   })
@@ -95,6 +96,13 @@ export async function scrapeEagleLabs() {
         .trim()
         .slice(0, 500)
 
+      let cost = null
+      if (evt.is_free) {
+        cost = 'Free'
+      } else if (evt.ticket_availability?.minimum_ticket_price?.display) {
+        cost = evt.ticket_availability.minimum_ticket_price.display
+      }
+
       allEvents.push(
         normalizeEvent({
           title,
@@ -105,6 +113,8 @@ export async function scrapeEagleLabs() {
           location,
           time,
           imageUrl: evt.logo?.url || null,
+          cost,
+          access: 'Registration Required',
         })
       )
     }

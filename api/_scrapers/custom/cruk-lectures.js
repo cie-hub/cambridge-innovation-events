@@ -48,6 +48,8 @@ export function parseCrukLectures($) {
             location: LOCATION,
             time,
             categories: ['Healthcare', 'Research'],
+            cost: 'Free',
+            access: 'Open to All',
           })
         )
         i += 3

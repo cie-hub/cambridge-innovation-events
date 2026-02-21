@@ -32,23 +32,27 @@ function isBusinessRelevant(title, description) {
 async function fetchEventDetails(url) {
   const $ = await fetchPage(url)
   const summary = $('div.summary')
-  if (!summary.length) return { description: '', imageUrl: null }
+  if (!summary.length) return { description: '', imageUrl: null, cost: null }
 
-  // Description from <p> tags (skip dateRange, venueName, cost)
   const parts = []
+  let cost = null
   summary.find('p').each((_i, el) => {
     const p = $(el)
-    if (p.hasClass('dateRange') || p.hasClass('venueName') || p.hasClass('cost')) return
+    if (p.hasClass('cost')) {
+      const costText = p.text().trim()
+      if (costText) cost = /free/i.test(costText) ? 'Free' : costText
+      return
+    }
+    if (p.hasClass('dateRange') || p.hasClass('venueName')) return
     const text = p.text().trim()
     if (text) parts.push(text)
   })
   const description = parts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 500)
 
-  // Image from div.image img
   const imgSrc = summary.find('.image img').first().attr('src')
   const imageUrl = imgSrc || null
 
-  return { description, imageUrl }
+  return { description, imageUrl, cost }
 }
 
 export async function scrapeCamPublicEvents() {
@@ -116,26 +120,24 @@ export async function scrapeCamPublicEvents() {
   // Fetch descriptions and images from individual event pages
   const results = []
   for (const evt of unique) {
-    let description = ''
-    let imageUrl = null
-
+    let details = { description: '', imageUrl: null, cost: null }
     try {
-      const details = await fetchEventDetails(evt.sourceUrl)
-      if (details.description) description = details.description
-      if (details.imageUrl) imageUrl = details.imageUrl
+      details = await fetchEventDetails(evt.sourceUrl)
     } catch (err) { log.warn(SOURCE, 'detail fetch failed', { url: evt.sourceUrl, error: err.message }) }
 
     results.push(
       normalizeEvent({
         title: evt.title,
-        description,
+        description: details.description,
         date: evt.dateStr,
         source: SOURCE,
         sourceUrl: evt.sourceUrl,
         location: evt.location,
         time: evt.time,
-        imageUrl,
+        imageUrl: details.imageUrl,
         categories: ['Research'],
+        cost: details.cost,
+        access: 'Open to All',
       })
     )
   }

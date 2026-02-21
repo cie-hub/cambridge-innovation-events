@@ -73,6 +73,13 @@ async function parseEntry(entry, source) {
   }
   if (!location && evt.location_type === 'zoom') location = 'Online (Zoom)'
 
+  let cost = null
+  if (evt.ticket_info) {
+    cost = evt.ticket_info.is_free ? 'Free' : null
+  }
+
+  const access = evt.registration_required ? 'Registration Required' : 'Open to All'
+
   let description = ''
   if (evt.url) {
     try {
@@ -91,6 +98,8 @@ async function parseEntry(entry, source) {
     location,
     time,
     imageUrl: evt.cover_url || null,
+    cost,
+    access,
   })
 }
 

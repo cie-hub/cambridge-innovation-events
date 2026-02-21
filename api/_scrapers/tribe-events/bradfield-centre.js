@@ -1,5 +1,6 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const BASE_URL = 'https://www.bradfieldcentre.com'
 const EVENTS_URL = BASE_URL
@@ -61,6 +62,8 @@ export function parseBradfieldCentre($) {
     const imgSrc = imgEl.attr('src') || ''
     const imageUrl = imgSrc && imgSrc.startsWith('http') ? imgSrc : null
 
+    const { cost, access } = inferCostAccess(description)
+
     events.push(
       normalizeEvent({
         title,
@@ -71,6 +74,8 @@ export function parseBradfieldCentre($) {
         categories,
         time,
         imageUrl,
+        cost,
+        access,
       })
     )
   })

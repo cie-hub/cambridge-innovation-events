@@ -1,7 +1,7 @@
 import { log } from './log.js'
 
 const REQUIRED = ['title', 'date', 'source']
-const RECOMMENDED = ['location', 'description', 'time', 'imageUrl', 'sourceUrl']
+const RECOMMENDED = ['location', 'description', 'time', 'imageUrl', 'sourceUrl', 'access']
 
 /**
  * Validates raw event data before normalization.

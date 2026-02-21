@@ -1,6 +1,7 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
 import { parseDayMonthInfer } from '../_shared/dates.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const BASE_URL = 'https://cambridgesciencepark.co.uk'
 const EVENTS_URL = `${BASE_URL}/events/`
@@ -39,6 +40,8 @@ export function parseCambridgeSciencePark($) {
     const imgSrc = item.find('img.wp-post-image').attr('src') || ''
     const imageUrl = imgSrc && imgSrc.startsWith('http') ? imgSrc : null
 
+    const { cost, access } = inferCostAccess(desc)
+
     events.push(
       normalizeEvent({
         title,
@@ -49,6 +52,8 @@ export function parseCambridgeSciencePark($) {
         time,
         imageUrl,
         location: 'Cambridge Science Park',
+        cost,
+        access,
       })
     )
   })

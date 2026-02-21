@@ -81,6 +81,8 @@ export async function scrapeIdeaspace() {
       sourceUrl: post.link || 'https://ideaspace.cam.ac.uk/getting-involved/',
       location: 'IdeaSpace, West Hub, Cambridge',
       imageUrl,
+      cost: 'Free',
+      access: 'Open to All',
     })
   }).filter(Boolean)
   log.info(SOURCE, 'scrape complete', { events: events.length })

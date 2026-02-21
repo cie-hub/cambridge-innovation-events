@@ -76,6 +76,7 @@ export async function scrapeEventbriteCambridge() {
         time,
         imageUrl,
         cost,
+        access: 'Registration Required',
         categories: ['Innovation'],
       })
     )

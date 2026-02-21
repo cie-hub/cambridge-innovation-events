@@ -69,6 +69,7 @@ export function parseInnovateCambridgeApi(apiEvents) {
     const location = ev.venue?.venue || ''
     const time = extractTime(ev.start_date, ev.end_date)
     const imageUrl = ev.image?.url || null
+    const cost = ev.cost ? (ev.cost.trim() || null) : null
 
     events.push(
       normalizeEvent({
@@ -81,6 +82,7 @@ export function parseInnovateCambridgeApi(apiEvents) {
         location,
         categories: contentCategories,
         access,
+        cost,
         time,
         imageUrl,
       })

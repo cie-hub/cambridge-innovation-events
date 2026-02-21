@@ -51,6 +51,7 @@ export function parseIfmEngage($) {
             location,
             cost,
             time,
+            access: 'Registration Required',
           })
         )
       }
@@ -89,6 +90,7 @@ export function parseIfmEngage($) {
         location,
         cost,
         time,
+        access: 'Registration Required',
       })
     )
   })

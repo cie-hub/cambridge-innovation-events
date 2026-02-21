@@ -67,6 +67,18 @@ function parseWixEventsFromHtml(html) {
         ? `https://www.qescambridge.com/event-details/${slug}`
         : EVENTS_URL
 
+      let cost = null
+      const tickets = evt.registration?.ticketing?.tickets
+      if (Array.isArray(tickets) && tickets.length > 0) {
+        const price = tickets[0].pricing?.price?.value
+        cost = price === 0 || price === '0' ? 'Free' : price ? `£${price}` : null
+      }
+
+      const regType = evt.registration?.registration?.type
+      const access = (regType === 'CLOSED' || regType === 'CLOSED_MANUALLY')
+        ? 'Members Only'
+        : 'Registration Required'
+
       events.push(
         normalizeEvent({
           title: evt.title,
@@ -77,6 +89,8 @@ function parseWixEventsFromHtml(html) {
           location,
           time,
           categories: ["Queen's Entrepreneurship"],
+          cost,
+          access,
         })
       )
     }
