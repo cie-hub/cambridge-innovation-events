@@ -41,7 +41,10 @@ export function inferCostAccess(text) {
   // Cost detection
   const priceMatch = text.match(PRICE_PATTERN)
   if (priceMatch) {
-    cost = `£${priceMatch[1]}`
+    const nearby = text.slice(Math.max(0, priceMatch.index - 20), Math.min(text.length, priceMatch.index + priceMatch[0].length + 20))
+    if (!/\bprizes?\b/i.test(nearby)) {
+      cost = `£${priceMatch[1]}`
+    }
   } else if (FREE_PATTERNS.some(re => re.test(text))) {
     cost = 'Free'
   }

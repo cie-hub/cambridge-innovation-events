@@ -102,4 +102,19 @@ describe('inferCostAccess', () => {
     const result = inferCostAccess('Please book your place via our website')
     expect(result.access).toBe('Registration Required')
   })
+
+  it('does not match prize money as ticket cost', () => {
+    const result = inferCostAccess('win prizes over £10,000 in AI and Sustainability')
+    expect(result.cost).toBeNull()
+  })
+
+  it('does not match "£5,000 prize" as ticket cost', () => {
+    const result = inferCostAccess('The winner receives a £5,000 prize')
+    expect(result.cost).toBeNull()
+  })
+
+  it('still matches actual ticket prices', () => {
+    const result = inferCostAccess('Tickets cost £25 per person')
+    expect(result.cost).toBe('£25')
+  })
 })
