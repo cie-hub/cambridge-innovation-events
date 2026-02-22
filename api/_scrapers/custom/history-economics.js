@@ -97,7 +97,7 @@ export function parseHistoryEconomics($) {
     events.push({
       title: emText,
       date: dateStr,
-      time: '17:00 - 18:00',
+      time: null,
       location,
       sourceUrl,
       description,

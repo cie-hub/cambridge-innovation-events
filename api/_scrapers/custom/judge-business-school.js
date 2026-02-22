@@ -3,6 +3,7 @@ import { log } from '../_shared/log.js'
 
 const API_URL = 'https://www.jbs.cam.ac.uk/wp-json/cjbs-event/v1/search'
 const SOURCE = 'judge-business-school'
+const FETCH_TIMEOUT_MS = 15_000
 
 const ADMISSIONS_CATEGORY_IDS = new Set(['3267', '3287', '3268', '3269', '3270'])
 
@@ -71,9 +72,12 @@ export function parseDetailPage($) {
 export async function scrapeJudgeBusinessSchool() {
   log.info(SOURCE, 'starting scrape')
 
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
   const res = await fetch(API_URL, {
     headers: { 'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)' },
-  })
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timer))
   if (!res.ok) throw new Error(`JBS Events API fetch failed: ${res.status}`)
   const data = await res.json()
   if (!data.post || !Array.isArray(data.post)) {

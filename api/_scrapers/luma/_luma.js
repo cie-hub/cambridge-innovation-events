@@ -79,7 +79,9 @@ async function parseEntry(entry, source) {
     cost = ticketInfo.is_free ? 'Free' : null
   }
 
-  const access = ticketInfo?.require_approval ? 'Registration Required' : 'Open to All'
+  const access = ticketInfo
+    ? (ticketInfo.require_approval ? 'Registration Required' : 'Open to All')
+    : null
 
   let description = ''
   if (evt.url) {

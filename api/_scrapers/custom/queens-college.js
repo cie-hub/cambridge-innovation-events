@@ -26,8 +26,7 @@ function parseWixEventsFromHtml(html) {
   try {
     warmupData = JSON.parse(html.slice(start, end))
   } catch (err) {
-    log.error(SOURCE, 'Wix warmup data parse failed', err)
-    return []
+    throw new Error(`Queens College Wix warmup data JSON parse failed — page structure may have changed`)
   }
 
   const appData = warmupData[WIX_EVENTS_APP_ID]

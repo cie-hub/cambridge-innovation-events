@@ -188,7 +188,7 @@ export function inferCostAccess(text) {
 
   if (!text) return { cost, access: null }
 
-  // Cost detection (regex — unchanged)
+  // Cost detection (regex)
   const priceMatch = text.match(PRICE_PATTERN)
   if (priceMatch) {
     const nearby = text.slice(Math.max(0, priceMatch.index - 20), Math.min(text.length, priceMatch.index + priceMatch[0].length + 20))
