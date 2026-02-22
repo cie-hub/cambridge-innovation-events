@@ -149,7 +149,7 @@ describe('parseDetailAccess', () => {
     const html = '<div class="node__content"><p>This is a hybrid event which is open to all members of the University of Cambridge and is free to attend.</p><p>Please book your place using the form below.</p></div>'
     const $ = cheerio.load(html)
     const result = parseDetailAccess($)
-    expect(result.access).toBe('University Only')
+    expect(result.access).toBe('Cambridge University')
     expect(result.cost).toBe('Free')
   })
 

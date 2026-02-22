@@ -39,7 +39,7 @@ const ACCESS_TAXONOMY = {
   'Members Only':          'members only for members member exclusive member event',
   'Invite Only':           'invitation only by invitation invite only invited guests only',
   'Students Only':         'students only for students open to students student only event',
-  'University Only':       'university staff and students college members only faculty only academic staff only members of the university',
+  'Cambridge University':       'university staff and students college members only faculty only academic staff only members of the university',
   'Industry Partners':     'park tenants only industry partners only network members only partner event only',
 }
 
@@ -156,7 +156,7 @@ export function inferAccess(text) {
 
   // "open to all members of the University" = University Only, not Public
   if (/open\s+to\s+all\s+members?\s+of\s+(?:the\s+)?(?:university|college)/i.test(text)) {
-    return 'University Only'
+    return 'Cambridge University'
   }
 
   const context = extractAccessContext(text)

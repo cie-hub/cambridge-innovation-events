@@ -30,7 +30,7 @@ describe('inferCostAccess', () => {
 
   it('detects "Wolfson College members" as university only', () => {
     const result = inferCostAccess('We invite all Wolfson College members')
-    expect(result.access).toBe('University Only')
+    expect(result.access).toBe('Cambridge University')
   })
 
   it('detects "register" as registration required', () => {

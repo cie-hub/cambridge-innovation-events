@@ -46,16 +46,11 @@ describe('filterAndParseApiEvents', () => {
     expect(female.categories).toContain('Entrepreneurship events')
   })
 
-  it('maps audience containing "University of Cambridge" to University Only', () => {
+  it('sets access to Public for all events', () => {
     const events = filterAndParseApiEvents(apiFixture.post)
-    const research = events.find(e => e.title.includes('Transparency'))
-    expect(research.access).toBe('University Only')
-  })
-
-  it('sets access to null for audience "All"', () => {
-    const events = filterAndParseApiEvents(apiFixture.post)
-    const energy = events.find(e => e.title.includes('Energy Policy'))
-    expect(energy.access).toBeNull()
+    for (const ev of events) {
+      expect(ev.access).toBe('Public')
+    }
   })
 })
 

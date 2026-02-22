@@ -27,10 +27,7 @@ export function filterAndParseApiEvents(posts) {
         .map(m => m[1].trim())
         .filter(Boolean)
 
-      let access = null
-      if (post.audience && /University of Cambridge/i.test(post.audience)) {
-        access = 'University Only'
-      }
+      const access = 'Public'
 
       return {
         title: post.title?.replace(/&amp;/g, '&'),

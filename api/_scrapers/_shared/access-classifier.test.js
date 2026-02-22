@@ -74,11 +74,11 @@ describe('inferAccess (n-gram TF-IDF classifier)', () => {
   })
 
   it('detects "university staff and students" as University Only', () => {
-    expect(inferAccess('Open to university staff and students')).toBe('University Only')
+    expect(inferAccess('Open to university staff and students')).toBe('Cambridge University')
   })
 
   it('detects "faculty only" as University Only', () => {
-    expect(inferAccess('This seminar is for faculty only')).toBe('University Only')
+    expect(inferAccess('This seminar is for faculty only')).toBe('Cambridge University')
   })
 
   it('detects "park tenants only" as Industry Partners', () => {
