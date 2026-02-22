@@ -154,9 +154,15 @@ function extractAccessContext(text) {
 export function inferAccess(text) {
   if (!text) return null
 
-  // "open to all members of the University" = University Only, not Public
+  // "open to all members of the University" = Cambridge University, not Public
   if (/open\s+to\s+all\s+members?\s+of\s+(?:the\s+)?(?:university|college)/i.test(text)) {
     return 'Cambridge University'
+  }
+
+  // "members only" without college/university/network qualifier = Members Only
+  // (college/university → Cambridge University, network → Industry Partners via TF-IDF)
+  if (/\bmembers?\s+only\b/i.test(text) && !/\b(?:college|university|network)\s+members?\s+only\b/i.test(text)) {
+    return 'Members Only'
   }
 
   const context = extractAccessContext(text)

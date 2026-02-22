@@ -146,7 +146,7 @@ describe('enrichWithApi', () => {
 
 describe('parseDetailAccess', () => {
   it('extracts access from detail page with "open to all" text', () => {
-    const html = '<div class="node__content"><p>This is a hybrid event which is open to all members of the University of Cambridge and is free to attend.</p><p>Please book your place using the form below.</p></div>'
+    const html = '<div class="main-block__copy"><p>This is a hybrid event which is open to all members of the University of Cambridge and is free to attend.</p><p>Please book your place using the form below.</p></div>'
     const $ = cheerio.load(html)
     const result = parseDetailAccess($)
     expect(result.access).toBe('Cambridge University')
@@ -154,7 +154,7 @@ describe('parseDetailAccess', () => {
   })
 
   it('returns null when no access signal in page', () => {
-    const html = '<div class="node__content"><p>Join us for an exciting workshop about entrepreneurship.</p></div>'
+    const html = '<div class="main-block__copy"><p>Join us for an exciting workshop about entrepreneurship.</p></div>'
     const $ = cheerio.load(html)
     const result = parseDetailAccess($)
     expect(result.access).toBeNull()

@@ -69,12 +69,7 @@ export default function EventPopup({ event, onClose }) {
                 <span>{event.location}</span>
               </div>
             )}
-            {event.cost && event.cost !== 'Free' && (
-              <div className="event-popup__field">
-                <span className="event-popup__field-label">Cost</span>
-                <span>{event.cost}</span>
-              </div>
-            )}
+            {/* Needs improvement — cost & access disabled for now */}
           </div>
 
           {event.description && (

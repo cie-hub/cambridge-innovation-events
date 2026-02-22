@@ -37,7 +37,7 @@ function decodeEntities(text) {
  * @returns {{ cost: string|null, access: string|null }}
  */
 export function parseDetailAccess($) {
-  const text = $('div.node__content').text().trim()
+  const text = $('div.main-block__copy').text().trim()
   return inferCostAccess(text)
 }
 

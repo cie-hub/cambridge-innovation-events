@@ -71,8 +71,7 @@ function EventCard({ event, onSelect }) {
             {event.time && <span className="event-card__time">{event.time}</span>}
             {event.location && <span className="event-card__location">{event.location}</span>}
             <span className="event-card__source">{formatSource(event.source)}</span>
-            {event.cost && event.cost !== 'Free' && <span className="event-card__cost">{event.cost}</span>}
-            {event.access && <span className="event-card__access">{event.access}</span>}
+            {/* Needs improvement — cost & access disabled for now */}
           </div>
           {!expanded && <EventDescription text={event.description} truncate />}
           {!expanded && event.categories?.length > 0 && (
@@ -127,18 +126,7 @@ function EventCard({ event, onSelect }) {
                   <span>{event.location}</span>
                 </div>
               )}
-              {event.cost && event.cost !== 'Free' && (
-                <div className="event-card__detail-row">
-                  <span className="event-card__detail-label">Cost</span>
-                  <span>{event.cost}</span>
-                </div>
-              )}
-              {event.access && (
-                <div className="event-card__detail-row">
-                  <span className="event-card__detail-label">Access</span>
-                  <span>{event.access}</span>
-                </div>
-              )}
+              {/* Needs improvement — cost & access disabled for now */}
             </div>
             <div className="event-card__detail-row">
               <a

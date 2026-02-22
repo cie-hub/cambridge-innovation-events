@@ -89,6 +89,11 @@ describe('inferAccess (n-gram TF-IDF classifier)', () => {
     expect(inferAccess('Exclusive to network members only')).toBe('Industry Partners')
   })
 
+  it('detects "SJIC members only" with noise text as Members Only', () => {
+    const text = 'Join the team at St John\'s Innovation Centre for drinks and nibbles to network, meet new and old members and find out our plans for the year. Open to SJIC members only.'
+    expect(inferAccess(text)).toBe('Members Only')
+  })
+
   // ── True negatives: must NOT match ──
 
   it('returns null for "Registration desk opens at 9am"', () => {
