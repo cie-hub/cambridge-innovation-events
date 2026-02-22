@@ -154,3 +154,11 @@ export const sources = {
     description: 'Cambridge History and Economics seminars and Joint Harvard Center online seminars',
   },
 }
+
+/**
+ * Location patterns that cause events to be rejected during validation.
+ * Add new patterns here to exclude events from specific cities.
+ */
+export const bannedLocationPatterns = [
+  /\blondon\b/i,
+]

@@ -1,4 +1,5 @@
 import { log } from './log.js'
+import { bannedLocationPatterns } from './config.js'
 
 const REQUIRED = ['title', 'date', 'source']
 const RECOMMENDED = ['location', 'description', 'time', 'imageUrl', 'sourceUrl']
@@ -18,6 +19,11 @@ export function validateEvent(raw, source) {
       log.warn(source, `Rejected event: missing required field "${field}"`, { title: raw.title || '(no title)' })
       return null
     }
+  }
+
+  if (raw.location && bannedLocationPatterns.some(re => re.test(raw.location))) {
+    log.warn(source, `Rejected event: banned location`, { title: raw.title, location: raw.location })
+    return null
   }
 
   const missing = RECOMMENDED.filter(f => !raw[f])

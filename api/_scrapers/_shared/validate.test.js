@@ -42,6 +42,29 @@ describe('validateEvent', () => {
     spy.mockRestore()
   })
 
+  it('returns null when location matches a banned pattern', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const event = { title: 'Bootcamp', date: '2026-03-15', source: 'test', location: 'In-Person in London' }
+    const result = validateEvent(event, 'test')
+    expect(result).toBeNull()
+    spy.mockRestore()
+  })
+
+  it('rejects banned locations case-insensitively', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const result = validateEvent({ title: 'Talk', date: '2026-03-15', source: 'test', location: 'LONDON office' }, 'test')
+    expect(result).toBeNull()
+    spy.mockRestore()
+  })
+
+  it('allows Cambridge locations', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const event = { title: 'Talk', date: '2026-03-15', source: 'test', location: 'The Bradfield Centre, Cambridge' }
+    const result = validateEvent(event, 'test')
+    expect(result).toBe(event)
+    spy.mockRestore()
+  })
+
   it('does not warn when all fields are present', () => {
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
     const event = {
