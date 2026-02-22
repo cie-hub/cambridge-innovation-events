@@ -7,7 +7,7 @@ const FREE_PATTERNS = [
   /\bno cost\b/i,
 ]
 
-const PRICE_PATTERN = /£(\d[\d,.]*)/
+const PRICE_PATTERN = /£(\d[\d,.]*(?:\s*\+?\s*(?:VAT|vat))?(?:\s+per\s+\w+)?)/
 
 // ── Access classifier: n-gram TF-IDF ──
 
@@ -33,13 +33,13 @@ const PRICE_PATTERN = /£(\d[\d,.]*)/
  * 4. Run: npx vitest run api/_scrapers/_shared/access-classifier.test.js
  */
 const ACCESS_TAXONOMY = {
-  'Open to All':           'open to all open to the public everyone welcome all welcome public event no registration required free to attend',
+  'Public':                'open to all open to the public everyone welcome all welcome public event no registration required free to attend',
   'Registration Required': 'register your place book your place book your spot sign up now get tickets buy tickets secure your place reserve your spot tickets required booking essential booking required register via booking via book now register now',
   'RSVP Required':         'rsvp required please rsvp confirm your attendance confirm your place please reply rsvp to confirm',
   'Members Only':          'members only for members member exclusive member event',
   'Invite Only':           'invitation only by invitation invite only invited guests only',
   'Students Only':         'students only for students open to students student only event',
-  'University Only':       'university staff and students college members only faculty only academic staff only',
+  'University Only':       'university staff and students college members only faculty only academic staff only members of the university',
   'Industry Partners':     'park tenants only industry partners only network members only partner event only',
 }
 
@@ -153,6 +153,11 @@ function extractAccessContext(text) {
  */
 export function inferAccess(text) {
   if (!text) return null
+
+  // "open to all members of the University" = University Only, not Public
+  if (/open\s+to\s+all\s+members?\s+of\s+(?:the\s+)?(?:university|college)/i.test(text)) {
+    return 'University Only'
+  }
 
   const context = extractAccessContext(text)
   if (!context) return null

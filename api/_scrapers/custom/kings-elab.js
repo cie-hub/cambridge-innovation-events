@@ -93,8 +93,9 @@ export function parseDetailPage($) {
     const text = $(el).text().trim()
     if (!text) return
     if (text.startsWith('TICKETS:')) {
-      cost = text.replace(/^TICKETS:\s*/i, '').trim()
-      if (/free/i.test(cost)) cost = 'Free'
+      const raw = text.replace(/^TICKETS:\s*/i, '').trim()
+      if (/free/i.test(raw)) cost = 'Free'
+      else if (/[£$€]\d/.test(raw)) cost = raw
       return
     }
     if (text.startsWith('WHEN:') || text.startsWith('WHERE:')) return
@@ -181,6 +182,7 @@ export async function scrapeKingsElab() {
         time: detail.time,
         location: detail.location,
         cost: detail.cost,
+        access: 'Registration Required',
       })
     })
   )

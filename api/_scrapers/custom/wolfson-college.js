@@ -30,6 +30,18 @@ function decodeEntities(text) {
 }
 
 /**
+ * Extracts cost and access from a Wolfson event detail page.
+ * Runs inferCostAccess on the full page body text where access info lives.
+ *
+ * @param {import('cheerio').CheerioAPI} $ - Cheerio-loaded detail page DOM
+ * @returns {{ cost: string|null, access: string|null }}
+ */
+export function parseDetailAccess($) {
+  const text = $('div.node__content').text().trim()
+  return inferCostAccess(text)
+}
+
+/**
  * Parses events from the Wolfson College Entrepreneurship Hub HTML feed.
  * Pure parsing function — no network calls.
  *
@@ -131,21 +143,41 @@ export async function scrapeWolfsonCollege() {
   log.info(SOURCE, `parsed ${htmlEvents.length} events from HTML feed`)
 
   const enriched = enrichWithApi(htmlEvents, apiData)
+  log.info(SOURCE, `enriched ${enriched.length} events, fetching detail pages`)
 
-  const events = enriched.map(ev =>
-    normalizeEvent({
-      title: ev.title,
-      description: ev.description,
-      date: ev.date,
-      source: SOURCE,
-      sourceUrl: ev.sourceUrl,
-      location: ev.location,
-      time: ev.time,
-      imageUrl: ev.imageUrl,
-      cost: ev.cost,
-      access: ev.access,
+  const results = await Promise.allSettled(
+    enriched.map(async (ev) => {
+      let { cost, access } = ev
+      if (ev.sourceUrl) {
+        const detail$ = await fetchPage(ev.sourceUrl)
+        const detail = parseDetailAccess(detail$)
+        if (detail.cost) cost = detail.cost
+        if (detail.access) access = detail.access
+      }
+      return normalizeEvent({
+        title: ev.title,
+        description: ev.description,
+        date: ev.date,
+        source: SOURCE,
+        sourceUrl: ev.sourceUrl,
+        location: ev.location,
+        time: ev.time,
+        imageUrl: ev.imageUrl,
+        cost,
+        access,
+      })
     })
-  ).filter(Boolean)
+  )
+
+  const events = results
+    .filter((r) => r.status === 'fulfilled')
+    .map((r) => r.value)
+    .filter(Boolean)
+
+  const rejected = results.filter((r) => r.status === 'rejected')
+  if (rejected.length > 0) {
+    log.warn(SOURCE, `${rejected.length} detail page fetches failed`)
+  }
 
   log.info(SOURCE, 'scrape complete', { total: htmlEvents.length, normalized: events.length })
   return events

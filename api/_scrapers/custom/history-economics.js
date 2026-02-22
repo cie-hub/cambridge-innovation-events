@@ -101,7 +101,7 @@ export function parseHistoryEconomics($) {
       location,
       sourceUrl,
       description,
-      access: 'University Only',
+      access: 'Public',
     })
   })
 

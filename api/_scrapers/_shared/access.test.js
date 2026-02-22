@@ -13,9 +13,9 @@ describe('inferCostAccess', () => {
     expect(result.cost).toBe('Free')
   })
 
-  it('detects £ price', () => {
+  it('detects £ price with per-unit suffix', () => {
     const result = inferCostAccess('Tickets: £25 per person')
-    expect(result.cost).toBe('£25')
+    expect(result.cost).toBe('£25 per person')
   })
 
   it('detects multi-digit £ price', () => {
@@ -51,7 +51,7 @@ describe('inferCostAccess', () => {
   it('detects "open to all" access', () => {
     const result = inferCostAccess('This event is open to all and free to attend')
     expect(result.cost).toBe('Free')
-    expect(result.access).toBe('Open to All')
+    expect(result.access).toBe('Public')
   })
 
   it('detects "invitation only" as invite only', () => {
@@ -88,9 +88,9 @@ describe('inferCostAccess', () => {
     expect(result.access).toBeNull()
   })
 
-  it('detects decimal £ price', () => {
+  it('detects decimal £ price with per-unit suffix', () => {
     const result = inferCostAccess('Early bird: £9.99 per ticket')
-    expect(result.cost).toBe('£9.99')
+    expect(result.cost).toBe('£9.99 per ticket')
   })
 
   it('does not match "Book Club" as registration required', () => {
@@ -113,9 +113,9 @@ describe('inferCostAccess', () => {
     expect(result.cost).toBeNull()
   })
 
-  it('still matches actual ticket prices', () => {
+  it('still matches actual ticket prices with suffix', () => {
     const result = inferCostAccess('Tickets cost £25 per person')
-    expect(result.cost).toBe('£25')
+    expect(result.cost).toBe('£25 per person')
   })
 
   it('detects single-digit £ price', () => {

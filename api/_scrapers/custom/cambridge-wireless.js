@@ -88,12 +88,13 @@ export function parseCambridgeWireless($) {
         categories,
         imageUrl,
         cost,
+        access: 'Registration Required',
       })
     )
   })
 
   // Only keep events in/near Cambridge UK
-  return events.filter((evt) => {
+  return events.filter(Boolean).filter((evt) => {
     const loc = (evt.location || '').toLowerCase()
     return !loc || loc.includes('cambridge') || loc.includes('online') || loc.includes('virtual')
   })

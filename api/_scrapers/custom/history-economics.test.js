@@ -66,9 +66,9 @@ describe('parseHistoryEconomics', () => {
     expect(titles).not.toContain('Past History and Economics seminars')
   })
 
-  it('sets access to University Only', () => {
+  it('sets access to Open to All', () => {
     const $ = cheerio.load(fixture)
     const events = parseHistoryEconomics($)
-    expect(events[0].access).toBe('University Only')
+    expect(events[0].access).toBe('Public')
   })
 })

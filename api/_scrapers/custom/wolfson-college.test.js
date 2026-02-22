@@ -4,7 +4,7 @@ import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import * as cheerio from 'cheerio'
-import { parseWolfsonHtml, enrichWithApi } from './wolfson-college.js'
+import { parseWolfsonHtml, enrichWithApi, parseDetailAccess } from './wolfson-college.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const html = readFileSync(resolve(__dirname, '_fixtures/wolfson-college.html'), 'utf-8')
@@ -99,6 +99,28 @@ describe('enrichWithApi', () => {
     }
   })
 
+  it('extracts cost and access from enriched descriptions', () => {
+    const fakeApi = [{
+      title: 'Free Event',
+      date: '2026-03-01T10:00:00',
+      body: 'This event is free to attend and open to all.',
+      image_url: '',
+      speaker: '',
+      venue: '',
+    }]
+    const htmlEvents = [{
+      title: 'Free Event',
+      date: '2026-03-01',
+      time: '10:00',
+      description: '',
+      sourceUrl: 'https://www.wolfson.cam.ac.uk/about/events/free',
+      imageUrl: null,
+    }]
+    const enriched = enrichWithApi(htmlEvents, fakeApi)
+    expect(enriched[0].cost).toBe('Free')
+    expect(enriched[0].access).toBe('Public')
+  })
+
   it('decodes HTML entities in API fields', () => {
     const fakeApi = [{
       title: 'Test &amp; Event &#039;2026&#039;',
@@ -119,5 +141,22 @@ describe('enrichWithApi', () => {
     const enriched = enrichWithApi(htmlEvents, fakeApi)
     expect(enriched[0].location).toContain("Chancellor's Centre")
     expect(enriched[0].location).toContain('Wolfson College, Cambridge')
+  })
+})
+
+describe('parseDetailAccess', () => {
+  it('extracts access from detail page with "open to all" text', () => {
+    const html = '<div class="node__content"><p>This is a hybrid event which is open to all members of the University of Cambridge and is free to attend.</p><p>Please book your place using the form below.</p></div>'
+    const $ = cheerio.load(html)
+    const result = parseDetailAccess($)
+    expect(result.access).toBe('University Only')
+    expect(result.cost).toBe('Free')
+  })
+
+  it('returns null when no access signal in page', () => {
+    const html = '<div class="node__content"><p>Join us for an exciting workshop about entrepreneurship.</p></div>'
+    const $ = cheerio.load(html)
+    const result = parseDetailAccess($)
+    expect(result.access).toBeNull()
   })
 })

@@ -7,7 +7,7 @@ const API_URL = `${BASE_URL}/wp-json/tribe/events/v1/events`
 const SOURCE = 'innovate-cambridge'
 
 const ACCESS_SLUGS = {
-  'open-to-all': 'Open to All',
+  'open-to-all': 'Public',
   'open-to-members': 'Open to Members',
   'closed-meeting': 'Closed Meeting',
   'closed-event': 'Glasshouse Closed',

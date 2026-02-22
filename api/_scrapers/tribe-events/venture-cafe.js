@@ -77,7 +77,7 @@ export async function scrapeVentureCafe() {
       .trim()
       .slice(0, 500)
 
-    const cost = evt.cost ? (evt.cost.trim() || null) : null
+    const cost = evt.cost?.trim() || 'Free'
 
     return normalizeEvent({
       title: evt.title,
@@ -89,6 +89,7 @@ export async function scrapeVentureCafe() {
       time,
       imageUrl: evt.image?.url || null,
       cost,
+      access: 'Public',
     })
   }).filter(Boolean)
   log.info(SOURCE, 'scrape complete', { events: events.length })

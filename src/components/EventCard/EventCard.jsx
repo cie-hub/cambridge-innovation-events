@@ -71,7 +71,7 @@ function EventCard({ event, onSelect }) {
             {event.time && <span className="event-card__time">{event.time}</span>}
             {event.location && <span className="event-card__location">{event.location}</span>}
             <span className="event-card__source">{formatSource(event.source)}</span>
-            {event.cost && <span className="event-card__cost">{event.cost}</span>}
+            {event.cost && event.cost !== 'Free' && <span className="event-card__cost">{event.cost}</span>}
             {event.access && <span className="event-card__access">{event.access}</span>}
           </div>
           {!expanded && <EventDescription text={event.description} truncate />}
@@ -127,7 +127,7 @@ function EventCard({ event, onSelect }) {
                   <span>{event.location}</span>
                 </div>
               )}
-              {event.cost && (
+              {event.cost && event.cost !== 'Free' && (
                 <div className="event-card__detail-row">
                   <span className="event-card__detail-label">Cost</span>
                   <span>{event.cost}</span>

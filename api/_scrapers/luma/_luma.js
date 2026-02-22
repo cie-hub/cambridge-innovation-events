@@ -80,7 +80,7 @@ async function parseEntry(entry, source) {
   }
 
   const access = ticketInfo
-    ? (ticketInfo.require_approval ? 'Registration Required' : 'Open to All')
+    ? (ticketInfo.require_approval ? 'Registration Required' : 'Public')
     : null
 
   let description = ''

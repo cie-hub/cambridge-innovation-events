@@ -19,7 +19,7 @@ describe('parseInnovateCambridgeApi', () => {
   it('sets access field to "Open to All" for public events', () => {
     const events = parseInnovateCambridgeApi(fixture.events)
     const aiMeetup = events.find(e => e.title === 'Cambridge AI Meetup')
-    expect(aiMeetup.access).toBe('Open to All')
+    expect(aiMeetup.access).toBe('Public')
   })
 
   it('sets access field to "Open to Members" for member events', () => {

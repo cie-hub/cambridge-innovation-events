@@ -58,11 +58,11 @@ describe('inferAccess (n-gram TF-IDF classifier)', () => {
   })
 
   it('detects "open to all" as Open to All', () => {
-    expect(inferAccess('This event is open to all and free to attend')).toBe('Open to All')
+    expect(inferAccess('This event is open to all and free to attend')).toBe('Public')
   })
 
   it('detects "everyone welcome" as Open to All', () => {
-    expect(inferAccess('Everyone welcome at this public event')).toBe('Open to All')
+    expect(inferAccess('Everyone welcome at this public event')).toBe('Public')
   })
 
   it('detects "students only" as Students Only', () => {

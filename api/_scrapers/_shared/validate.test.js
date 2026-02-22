@@ -70,7 +70,7 @@ describe('validateEvent', () => {
     const event = {
       title: 'Talk', date: '2026-02-17', source: 'test',
       location: 'Cambridge', description: 'A talk', time: '17:00',
-      imageUrl: 'https://example.com/img.jpg', sourceUrl: 'https://example.com', access: 'Open to All',
+      imageUrl: 'https://example.com/img.jpg', sourceUrl: 'https://example.com', access: 'Public',
     }
     validateEvent(event, 'test')
     const warnings = spy.mock.calls.map(c => JSON.parse(c[0])).filter(o => o.level === 'warn')

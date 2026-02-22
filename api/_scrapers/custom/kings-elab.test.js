@@ -4,7 +4,7 @@ import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import * as cheerio from 'cheerio'
-import { parseKingsElab } from './kings-elab.js'
+import { parseKingsElab, parseDetailPage } from './kings-elab.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const html = readFileSync(resolve(__dirname, '_fixtures/kings-elab.html'), 'utf-8')
@@ -35,5 +35,29 @@ describe('parseKingsElab', () => {
     expect(run1.length).toBe(run2.length)
     expect(run1[0].title).toBe(run2[0].title)
     expect(run1[0].date).toBe(run2[0].date)
+  })
+})
+
+describe('parseDetailPage', () => {
+  const wrap = (body) => `<div class="sqs-block-content">${body}</div>`
+
+  it('extracts Free cost from TICKETS line', () => {
+    const $ = cheerio.load(wrap('<p>TICKETS: Free</p>'))
+    expect(parseDetailPage($).cost).toBe('Free')
+  })
+
+  it('extracts priced cost with currency symbol', () => {
+    const $ = cheerio.load(wrap('<p>TICKETS: £10 per person</p>'))
+    expect(parseDetailPage($).cost).toBe('£10 per person')
+  })
+
+  it('ignores non-pricing text like Register here', () => {
+    const $ = cheerio.load(wrap('<p>TICKETS: Register here.</p>'))
+    expect(parseDetailPage($).cost).toBeNull()
+  })
+
+  it('ignores informational text about future registration', () => {
+    const $ = cheerio.load(wrap('<p>TICKETS: Registration information will be available in February</p>'))
+    expect(parseDetailPage($).cost).toBeNull()
   })
 })
