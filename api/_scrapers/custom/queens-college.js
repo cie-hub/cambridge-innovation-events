@@ -74,7 +74,7 @@ function parseWixEventsFromHtml(html) {
         cost = price === 0 || price === '0' ? 'Free' : price ? `£${price}` : null
       }
 
-      const regType = evt.registration?.registration?.type
+      const regType = evt.registration?.type
       const access = (regType === 'CLOSED' || regType === 'CLOSED_MANUALLY')
         ? 'Members Only'
         : 'Registration Required'

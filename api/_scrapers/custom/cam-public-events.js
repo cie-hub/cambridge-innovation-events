@@ -1,5 +1,6 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const RSS_URL = 'http://webservices.admin.cam.ac.uk/events/api/programmes/11/calendar/events.rss'
 const SOURCE = 'cam-public-events'
@@ -39,8 +40,11 @@ async function fetchEventDetails(url) {
   summary.find('p').each((_i, el) => {
     const p = $(el)
     if (p.hasClass('cost')) {
-      const costText = p.text().trim()
-      if (costText) cost = /free/i.test(costText) ? 'Free' : costText
+      const costText = p.text().trim().replace(/^cost:\s*/i, '')
+      if (costText) {
+        const inferred = inferCostAccess(costText)
+        cost = inferred.cost || costText
+      }
       return
     }
     if (p.hasClass('dateRange') || p.hasClass('venueName')) return
