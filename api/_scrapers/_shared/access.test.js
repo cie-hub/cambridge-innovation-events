@@ -92,4 +92,14 @@ describe('inferCostAccess', () => {
     const result = inferCostAccess('Early bird: £9.99 per ticket')
     expect(result.cost).toBe('£9.99')
   })
+
+  it('does not match "Book Club" as registration required', () => {
+    const result = inferCostAccess('Monthly Book Club meeting at the Science Park')
+    expect(result.access).toBeNull()
+  })
+
+  it('still matches "book your place"', () => {
+    const result = inferCostAccess('Please book your place via our website')
+    expect(result.access).toBe('Registration Required')
+  })
 })

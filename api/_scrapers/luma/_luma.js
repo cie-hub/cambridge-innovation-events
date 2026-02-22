@@ -74,11 +74,12 @@ async function parseEntry(entry, source) {
   if (!location && evt.location_type === 'zoom') location = 'Online (Zoom)'
 
   let cost = null
-  if (evt.ticket_info) {
-    cost = evt.ticket_info.is_free ? 'Free' : null
+  const ticketInfo = entry?.ticket_info
+  if (ticketInfo) {
+    cost = ticketInfo.is_free ? 'Free' : null
   }
 
-  const access = evt.registration_required ? 'Registration Required' : 'Open to All'
+  const access = ticketInfo?.require_approval ? 'Registration Required' : 'Open to All'
 
   let description = ''
   if (evt.url) {

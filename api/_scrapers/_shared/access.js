@@ -21,7 +21,7 @@ const RSVP_PATTERN = /\brsvp\b/i
 
 const REGISTER_PATTERNS = [
   /\bregist(?:er|ration)\b/i,
-  /\bbook(?:ing)?\b/i,
+  /\bbook(?:ing)?(?!\s+club)\b/i,
   /\bsign\s*up\b/i,
 ]
 

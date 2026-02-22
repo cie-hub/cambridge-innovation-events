@@ -38,7 +38,7 @@ export function parseIfmEngage($) {
         }
 
         const location = data.location?.name || data.location?.address?.addressLocality || ''
-        const cost = data.offers?.price === 0 || data.isAccessibleForFree ? 'Free' : null
+        const cost = parseFloat(data.offers?.price) === 0 || data.isAccessibleForFree ? 'Free' : null
 
         events.push(
           normalizeEvent({
