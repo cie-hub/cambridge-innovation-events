@@ -14,6 +14,7 @@
   /* Decorative */
   --color-border: rgba(110, 120, 255, 0.15);
   --color-tag-bg: rgba(110, 120, 255, 0.1);
+  --color-cost-bg: rgba(230, 66, 152, 0.1);
 
   /* Glass & surfaces */
   --color-glass: rgba(255, 255, 255, 0.97);
@@ -53,6 +54,7 @@
   --color-text-secondary: #a0a0b0;
   --color-border: rgba(110, 120, 255, 0.25);
   --color-tag-bg: rgba(110, 120, 255, 0.2);
+  --color-cost-bg: rgba(230, 66, 152, 0.15);
   --color-glass: rgba(22, 33, 62, 0.95);
   --color-card-bg: rgba(22, 33, 62, 0.92);
   --color-overlay: rgba(0, 0, 0, 0.5);
