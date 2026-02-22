@@ -47,6 +47,16 @@ export function buildScrapeHandler({ getAllSourceIds }) {
         })
 
         for (const event of events) {
+          // Cross-source dedup: if another source already has this event, replace it
+          if (event.contentHash) {
+            const existing = await eventsCol.findOne({
+              contentHash: event.contentHash,
+              source: { $ne: sourceId },
+            })
+            if (existing) {
+              await eventsCol.deleteOne({ _id: existing._id })
+            }
+          }
           await eventsCol.updateOne(
             { hash: event.hash },
             { $set: event },
