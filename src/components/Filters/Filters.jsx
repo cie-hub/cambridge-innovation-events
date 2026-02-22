@@ -60,7 +60,7 @@ export default function Filters({
             className={`filters__toggle ${expanded === 'sources' ? 'filters__toggle--open' : ''} ${sourceCount > 0 ? 'filters__toggle--has-active' : ''}`}
             onClick={() => toggleSection('sources')}
           >
-            Sources{sourceCount > 0 && <span className="filters__badge">{sourceCount}</span>}
+            Organisers{sourceCount > 0 && <span className="filters__badge">{sourceCount}</span>}
           </button>
         )}
 
