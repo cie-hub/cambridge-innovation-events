@@ -9,7 +9,7 @@ export const batches = {
   3: ['venture-cafe', 'allia', 'cambridge-wireless'],
   4: ['luma-cffn', 'luma-cue', 'luma-cament'],
   5: ['talks-cam', 'cruk-lectures', 'eventbrite-cambridge', 'makespace', 'cam-public-events'],
-  6: ['ifm-events', 'cambridge-enterprise', 'wolfson-college'],
+  6: ['ifm-events', 'cambridge-enterprise', 'wolfson-college', 'history-economics'],
   7: ['meetup-cambridge'],
 }
 
@@ -147,5 +147,10 @@ export const sources = {
     name: 'Cambridge ThinkLab',
     url: 'https://www.thinklab.strategic-partnerships.admin.cam.ac.uk/events/',
     description: 'University of Cambridge ThinkLab research impact events and talks',
+  },
+  'history-economics': {
+    name: 'History and Economics Seminar',
+    url: 'https://www.hist.cam.ac.uk/event-series/history-and-economics',
+    description: 'Cambridge History and Economics seminars and Joint Harvard Center online seminars',
   },
 }
