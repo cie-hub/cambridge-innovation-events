@@ -38,7 +38,6 @@ export function parseCambridgeEnterprise($) {
         time: timeStr,
         imageUrl,
         categories: ['Enterprise'],
-        access: 'Registration Required',
       })
     )
   })

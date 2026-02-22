@@ -181,7 +181,6 @@ export async function scrapeKingsElab() {
         time: detail.time,
         location: detail.location,
         cost: detail.cost,
-        access: 'Registration Required',
       })
     })
   )

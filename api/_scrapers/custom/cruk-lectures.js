@@ -49,7 +49,6 @@ export function parseCrukLectures($) {
             time,
             categories: ['Healthcare', 'Research'],
             cost: 'Free',
-            access: 'Open to All',
           })
         )
         i += 3

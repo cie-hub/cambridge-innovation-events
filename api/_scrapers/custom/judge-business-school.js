@@ -98,7 +98,6 @@ export async function scrapeJudgeBusinessSchool() {
         time: detail.time,
         location: detail.location,
         cost: 'Free',
-        access: 'Registration Required',
       })
     })
   )

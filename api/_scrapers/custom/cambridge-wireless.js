@@ -88,7 +88,6 @@ export function parseCambridgeWireless($) {
         categories,
         imageUrl,
         cost,
-        access: 'Registration Required',
       })
     )
   })
