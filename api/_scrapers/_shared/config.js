@@ -25,8 +25,8 @@ export const sources = {
   },
   'judge-business-school': {
     name: 'Cambridge Judge Business School',
-    url: 'https://www.jbs.cam.ac.uk/entrepreneurship',
-    description: 'Accelerate Cambridge, EnterpriseTECH, talks, panels, demo days',
+    url: 'https://www.jbs.cam.ac.uk/events/',
+    description: 'Research seminars, entrepreneurship events, and workshops (excludes admissions)',
   },
   'bradfield-centre': {
     name: 'The Bradfield Centre',
