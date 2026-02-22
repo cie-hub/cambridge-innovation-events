@@ -75,7 +75,6 @@ export function parseAllia($) {
         time,
         imageUrl,
         cost,
-        access: 'Open to All',
       })
     )
   })

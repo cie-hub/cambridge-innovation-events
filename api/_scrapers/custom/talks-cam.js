@@ -205,7 +205,6 @@ export async function scrapeTalksCam() {
         imageUrl,
         categories: evt.categories || [],
         cost: 'Free',
-        access: 'Open to All',
       })
     )
   }

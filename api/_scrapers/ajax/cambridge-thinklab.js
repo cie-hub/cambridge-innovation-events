@@ -158,7 +158,6 @@ export async function scrapeCambridgeThinklab() {
       location: evt.location,
       imageUrl: evt.imageUrl,
       cost: 'Free',
-      access: 'Open to All',
     }))
     .filter(Boolean)
 

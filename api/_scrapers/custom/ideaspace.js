@@ -82,7 +82,6 @@ export async function scrapeIdeaspace() {
       location: 'IdeaSpace, West Hub, Cambridge',
       imageUrl,
       cost: 'Free',
-      access: 'Open to All',
     })
   }).filter(Boolean)
   log.info(SOURCE, 'scrape complete', { events: events.length })

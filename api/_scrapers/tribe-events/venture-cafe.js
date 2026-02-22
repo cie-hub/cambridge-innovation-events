@@ -89,7 +89,6 @@ export async function scrapeVentureCafe() {
       time,
       imageUrl: evt.image?.url || null,
       cost,
-      access: 'Open to All',
     })
   }).filter(Boolean)
   log.info(SOURCE, 'scrape complete', { events: events.length })

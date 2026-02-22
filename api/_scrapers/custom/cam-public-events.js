@@ -141,7 +141,6 @@ export async function scrapeCamPublicEvents() {
         imageUrl: details.imageUrl,
         categories: ['Research'],
         cost: details.cost,
-        access: 'Open to All',
       })
     )
   }
