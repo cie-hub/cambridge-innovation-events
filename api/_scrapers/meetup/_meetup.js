@@ -109,7 +109,7 @@ export async function fetchMeetupGroups(slugs, source) {
 
         let cost = null
         if (evt.feeSettings) {
-          cost = evt.feeSettings.amount === 0 ? 'Free' : `${evt.feeSettings.currency || '£'}${evt.feeSettings.amount}`
+          cost = evt.feeSettings.amount === 0 ? 'Free' : evt.feeSettings.currency ? `${evt.feeSettings.currency}${evt.feeSettings.amount}` : `${evt.feeSettings.amount}`
         }
 
         const normalized = normalizeEvent({

@@ -5,7 +5,7 @@ const FREE_PATTERNS = [
   /\bno cost\b/i,
 ]
 
-const PRICE_PATTERN = /£(\d[\d,.]*\d)/
+const PRICE_PATTERN = /£(\d[\d,.]*)/
 
 const MEMBERS_PATTERNS = [
   /\bmembers\s+only\b/i,

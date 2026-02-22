@@ -117,4 +117,9 @@ describe('inferCostAccess', () => {
     const result = inferCostAccess('Tickets cost £25 per person')
     expect(result.cost).toBe('£25')
   })
+
+  it('detects single-digit £ price', () => {
+    const result = inferCostAccess('Entry fee: £5')
+    expect(result.cost).toBe('£5')
+  })
 })
