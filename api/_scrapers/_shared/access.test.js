@@ -28,9 +28,9 @@ describe('inferCostAccess', () => {
     expect(result.access).toBe('Members Only')
   })
 
-  it('detects "Wolfson College members" as members only', () => {
+  it('detects "Wolfson College members" as university only', () => {
     const result = inferCostAccess('We invite all Wolfson College members')
-    expect(result.access).toBe('Members Only')
+    expect(result.access).toBe('University Only')
   })
 
   it('detects "register" as registration required', () => {
@@ -54,9 +54,9 @@ describe('inferCostAccess', () => {
     expect(result.access).toBe('Open to All')
   })
 
-  it('detects "invitation only" as members only', () => {
+  it('detects "invitation only" as invite only', () => {
     const result = inferCostAccess('By invitation only for CEOs on the Park')
-    expect(result.access).toBe('Members Only')
+    expect(result.access).toBe('Invite Only')
   })
 
   it('returns nulls for text with no signals', () => {
