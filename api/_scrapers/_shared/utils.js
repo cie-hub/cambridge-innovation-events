@@ -11,6 +11,7 @@
 import { createHash } from 'crypto'
 import * as cheerio from 'cheerio'
 import { classify } from './classifier.js'
+import { inferAccess } from './access.js'
 import { validateEvent } from './validate.js'
 
 /**
@@ -105,7 +106,7 @@ export function normalizeEvent({
     location: location ? sanitizeLocation(location) : '',
     categories: classify(title, description || ''),
     cost: cost || null,
-    access: access || null,
+    access: access || inferAccess(description || ''),
     time: normalizeTime(time),
     imageUrl: imageUrl || null,
     scrapedAt: new Date(),
