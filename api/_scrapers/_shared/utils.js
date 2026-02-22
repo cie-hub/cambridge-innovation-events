@@ -29,6 +29,20 @@ export function hashEvent(title, date, source) {
     .slice(0, 16)
 }
 
+/**
+ * Generates a source-independent hash from title + date only.
+ * Used to detect the same event scraped from different sources.
+ * @param {string} title - Event title
+ * @param {string} date - Date string (YYYY-MM-DD)
+ * @returns {string} 16-character hex hash
+ */
+export function contentHashEvent(title, date) {
+  return createHash('sha256')
+    .update(`${title}|${date}`)
+    .digest('hex')
+    .slice(0, 16)
+}
+
 function convertToken(token) {
   const t = token.trim()
   if (/^\d{1,2}:\d{2}$/.test(t)) return t.padStart(5, '0')
@@ -111,6 +125,7 @@ export function normalizeEvent({
     imageUrl: imageUrl || null,
     scrapedAt: new Date(),
     hash: hashEvent(title, dateStr, source),
+    contentHash: contentHashEvent(title, dateStr),
   }
 }
 
