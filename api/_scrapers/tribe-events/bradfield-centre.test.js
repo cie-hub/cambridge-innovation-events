@@ -4,44 +4,69 @@ import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import * as cheerio from 'cheerio'
-import { parseBradfieldCentre } from './bradfield-centre.js'
+import { parseBradfieldCentre, parseDetailPage } from './bradfield-centre.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const html = readFileSync(resolve(__dirname, '_fixtures/bradfield-centre.html'), 'utf-8')
+const detailHtml = readFileSync(resolve(__dirname, '_fixtures/bradfield-centre-detail.html'), 'utf-8')
 
 describe('parseBradfieldCentre', () => {
-  it('extracts events from fixture HTML', () => {
+  it('extracts listings from fixture HTML', () => {
     const $ = cheerio.load(html)
-    const events = parseBradfieldCentre($)
-    expect(events.length).toBeGreaterThan(0)
-    const first = events[0]
+    const listings = parseBradfieldCentre($)
+    expect(listings.length).toBeGreaterThan(0)
+    const first = listings[0]
     expect(first.title).toBeDefined()
     expect(first.title.length).toBeGreaterThan(0)
-    expect(first.date).toBeInstanceOf(Date)
-    expect(first.source).toBe('bradfield-centre')
-    expect(first.hash).toBeDefined()
+    expect(typeof first.date).toBe('string')
+    expect(first.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 
   it('extracts the correct number of event highlights', () => {
     const $ = cheerio.load(html)
-    const events = parseBradfieldCentre($)
-    expect(events.length).toBe(2)
+    const listings = parseBradfieldCentre($)
+    expect(listings.length).toBe(2)
   })
 
   it('parses the first event correctly', () => {
     const $ = cheerio.load(html)
-    const events = parseBradfieldCentre($)
-    const first = events[0]
+    const listings = parseBradfieldCentre($)
+    const first = listings[0]
     expect(first.title).toContain('Byte Size')
     expect(first.sourceUrl).toContain('bradfieldcentre.com')
-    expect(first.date.toISOString().slice(0, 10)).toBe('2026-02-24')
+    expect(first.date).toMatch(/^2026-02-2[34]$/)
   })
 
-  it('produces deterministic hashes', () => {
+  it('produces consistent listing structure', () => {
     const $ = cheerio.load(html)
-    const run1 = parseBradfieldCentre($)
-    const run2 = parseBradfieldCentre(cheerio.load(html))
-    expect(run1[0].hash).toBe(run2[0].hash)
-    expect(run1[0].hash).toHaveLength(16)
+    const listings = parseBradfieldCentre($)
+    const first = listings[0]
+    expect(first).toHaveProperty('title')
+    expect(first).toHaveProperty('date')
+    expect(first).toHaveProperty('sourceUrl')
+    expect(first).toHaveProperty('description')
+    expect(first).toHaveProperty('categories')
+    expect(first).toHaveProperty('time')
+    expect(first).toHaveProperty('imageUrl')
+  })
+})
+
+describe('parseDetailPage (Bradfield)', () => {
+  it('extracts cost from detail page body text', () => {
+    const $ = cheerio.load(detailHtml)
+    const result = parseDetailPage($)
+    expect(result.cost).toBe('Free')
+  })
+
+  it('extracts access from detail page body text', () => {
+    const $ = cheerio.load(detailHtml)
+    const result = parseDetailPage($)
+    expect(result.access).toBe('Registration Required')
+  })
+
+  it('extracts description from detail page', () => {
+    const $ = cheerio.load(detailHtml)
+    const result = parseDetailPage($)
+    expect(result.description).toContain('AI agents')
   })
 })

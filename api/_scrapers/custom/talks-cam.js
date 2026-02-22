@@ -204,6 +204,7 @@ export async function scrapeTalksCam() {
         time,
         imageUrl,
         categories: evt.categories || [],
+        cost: 'Free',
       })
     )
   }

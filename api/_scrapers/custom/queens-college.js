@@ -9,7 +9,7 @@ const WIX_EVENTS_APP_ID = '140603ad-af8d-84a5-2c80-a0f60cb47351'
 function parseWixEventsFromHtml(html) {
   const marker = '"appsWarmupData":'
   const idx = html.indexOf(marker)
-  if (idx === -1) return []
+  if (idx === -1) throw new Error('Queens College page missing appsWarmupData marker — Wix page structure may have changed')
 
   const start = idx + marker.length
   let depth = 0
@@ -26,12 +26,11 @@ function parseWixEventsFromHtml(html) {
   try {
     warmupData = JSON.parse(html.slice(start, end))
   } catch (err) {
-    log.error(SOURCE, 'Wix warmup data parse failed', err)
-    return []
+    throw new Error(`Queens College Wix warmup data JSON parse failed — page structure may have changed`)
   }
 
   const appData = warmupData[WIX_EVENTS_APP_ID]
-  if (!appData) return []
+  if (!appData) throw new Error(`Queens College Wix app ID ${WIX_EVENTS_APP_ID} not found in warmup data — app may have been reinstalled`)
 
   const events = []
 
@@ -67,6 +66,18 @@ function parseWixEventsFromHtml(html) {
         ? `https://www.qescambridge.com/event-details/${slug}`
         : EVENTS_URL
 
+      let cost = null
+      const tickets = evt.registration?.ticketing?.tickets
+      if (Array.isArray(tickets) && tickets.length > 0) {
+        const price = tickets[0].pricing?.price?.value
+        cost = price === 0 || price === '0' ? 'Free' : price ? `£${price}` : null
+      }
+
+      const regType = evt.registration?.type
+      const access = (regType === 'CLOSED' || regType === 'CLOSED_MANUALLY')
+        ? 'Members Only'
+        : 'Registration Required'
+
       events.push(
         normalizeEvent({
           title: evt.title,
@@ -77,6 +88,8 @@ function parseWixEventsFromHtml(html) {
           location,
           time,
           categories: ["Queen's Entrepreneurship"],
+          cost,
+          access,
         })
       )
     }

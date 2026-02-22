@@ -1,5 +1,6 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const BASE_URL = 'https://www.cambridgenetwork.co.uk'
 const EVENTS_URL = `${BASE_URL}/events/search-results`
@@ -75,7 +76,9 @@ export function parseDetailPage($) {
     if (tag) categories.push(tag)
   })
 
-  return { time, location, description, imageUrl, categories }
+  const { cost, access } = inferCostAccess(description || '')
+
+  return { time, location, description, imageUrl, categories, cost, access }
 }
 
 /**
@@ -157,6 +160,8 @@ export async function scrapeCambridgeNetwork() {
         imageUrl: detail.imageUrl || evt.imageUrl,
         time: detail.time,
         location: detail.location,
+        cost: detail.cost,
+        access: detail.access,
       })
     })
   )

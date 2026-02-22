@@ -4,6 +4,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const mockCollection = {
   updateOne: vi.fn(),
   deleteMany: vi.fn(),
+  createIndex: vi.fn(),
+  aggregate: vi.fn(() => ({ toArray: vi.fn(() => Promise.resolve([])) })),
+  findOne: vi.fn(),
 }
 const mockDb = { collection: vi.fn(() => mockCollection) }
 

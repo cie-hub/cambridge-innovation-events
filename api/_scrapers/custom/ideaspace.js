@@ -55,7 +55,7 @@ export async function scrapeIdeaspace() {
   })
   if (!res.ok) throw new Error(`IdeaSpace fetch failed: ${res.status}`)
   const posts = await res.json()
-  if (!Array.isArray(posts)) return []
+  if (!Array.isArray(posts)) throw new Error('IdeaSpace API returned non-array response — schema or category ID may have changed')
 
   const events = posts.map((post) => {
     const title = post.title?.rendered?.replace(/<[^>]*>/g, '').trim()
@@ -81,6 +81,7 @@ export async function scrapeIdeaspace() {
       sourceUrl: post.link || 'https://ideaspace.cam.ac.uk/getting-involved/',
       location: 'IdeaSpace, West Hub, Cambridge',
       imageUrl,
+      cost: 'Free',
     })
   }).filter(Boolean)
   log.info(SOURCE, 'scrape complete', { events: events.length })

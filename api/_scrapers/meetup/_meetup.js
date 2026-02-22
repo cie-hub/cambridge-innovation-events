@@ -34,6 +34,7 @@ const EVENTS_FRAGMENT = `
       going { totalCount }
       eventType isOnline
       series { description }
+      feeSettings { amount currency }
     }
   }
 `
@@ -106,6 +107,12 @@ export async function fetchMeetupGroups(slugs, source) {
         const imageUrl = evt.featuredEventPhoto?.highResUrl || null
         const isRecurring = !!evt.series
 
+        let cost = null
+        if (evt.feeSettings) {
+          const symbol = { GBP: '£', USD: '$', EUR: '€' }[evt.feeSettings.currency] || evt.feeSettings.currency || ''
+          cost = evt.feeSettings.amount === 0 ? 'Free' : `${symbol}${evt.feeSettings.amount}`
+        }
+
         const normalized = normalizeEvent({
           title: evt.title,
           description,
@@ -116,6 +123,8 @@ export async function fetchMeetupGroups(slugs, source) {
           time,
           imageUrl,
           categories: [groupName],
+          cost,
+          access: 'RSVP Required',
         })
         if (!normalized) continue
         normalized._isRecurring = isRecurring

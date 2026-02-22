@@ -70,7 +70,11 @@ export function parseCambridgeWireless($) {
     })
 
     const badge = card.find('.event-badge').text().trim()
-    const cost = badge && badge.toLowerCase() === 'free' ? 'Free' : null
+    let cost = null
+    if (badge) {
+      if (/free/i.test(badge)) cost = 'Free'
+      else if (/£/.test(badge)) cost = badge
+    }
 
     events.push(
       normalizeEvent({

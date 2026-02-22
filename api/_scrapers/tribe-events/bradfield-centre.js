@@ -1,5 +1,6 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const BASE_URL = 'https://www.bradfieldcentre.com'
 const EVENTS_URL = BASE_URL
@@ -25,14 +26,12 @@ function parseDateAndTime(raw) {
 }
 
 /**
- * Parses Bradfield Centre events from a cheerio-loaded DOM.
- * Event highlights are structured as div blocks with h3 titles and <date> elements.
- *
+ * Parses Bradfield Centre listing page into event stubs.
  * @param {import('cheerio').CheerioAPI} $ - Cheerio-loaded DOM
- * @returns {import('./_utils.js').NormalizedEvent[]} Array of normalized event objects
+ * @returns {{ title: string, date: string, sourceUrl: string, description: string, categories: string[], time: string|null, imageUrl: string|null }[]}
  */
 export function parseBradfieldCentre($) {
-  const events = []
+  const listings = []
 
   const highlights = $('div.w-full.mt-6.mb-12.border-b')
 
@@ -61,31 +60,69 @@ export function parseBradfieldCentre($) {
     const imgSrc = imgEl.attr('src') || ''
     const imageUrl = imgSrc && imgSrc.startsWith('http') ? imgSrc : null
 
-    events.push(
-      normalizeEvent({
-        title,
-        description,
-        date: startDateStr,
-        source: SOURCE,
-        sourceUrl,
-        categories,
-        time,
-        imageUrl,
-      })
-    )
+    listings.push({ title, date: startDateStr, sourceUrl, description, categories, time, imageUrl })
   })
 
-  return events
+  return listings
 }
 
 /**
- * Fetches and parses events from the Bradfield Centre.
+ * Extracts cost/access from a Bradfield Centre detail page.
+ * Body text lives in article div.article p elements.
+ * @param {import('cheerio').CheerioAPI} $ - Cheerio-loaded detail page DOM
+ * @returns {{ description: string, cost: string|null, access: string|null }}
+ */
+export function parseDetailPage($) {
+  const paragraphs = []
+  $('article div.article p').each((_i, el) => {
+    const text = $(el).text().trim()
+    if (text) paragraphs.push(text)
+  })
+  const fullText = paragraphs.join(' ')
+  const description = fullText.replace(/\s+/g, ' ').trim().slice(0, 500)
+  const { cost, access } = inferCostAccess(fullText)
+  return { description, cost, access }
+}
+
+/**
+ * Fetches and parses events from the Bradfield Centre, including detail pages.
  * @returns {Promise<import('./_utils.js').NormalizedEvent[]>} Array of normalized event objects
  */
 export async function scrapeBradfieldCentre() {
   log.info(SOURCE, 'starting scrape')
   const $ = await fetchPage(EVENTS_URL)
-  const events = parseBradfieldCentre($)
+  const listings = parseBradfieldCentre($)
+  log.info(SOURCE, `found ${listings.length} listings, fetching details`)
+
+  const results = await Promise.allSettled(
+    listings.map(async (evt) => {
+      const detail$ = await fetchPage(evt.sourceUrl)
+      const detail = parseDetailPage(detail$)
+      return normalizeEvent({
+        title: evt.title,
+        description: detail.description || evt.description,
+        date: evt.date,
+        source: SOURCE,
+        sourceUrl: evt.sourceUrl,
+        categories: evt.categories,
+        time: evt.time,
+        imageUrl: evt.imageUrl,
+        cost: detail.cost,
+        access: detail.access,
+      })
+    })
+  )
+
+  const rejected = results.filter((r) => r.status === 'rejected')
+  if (rejected.length > 0) {
+    log.warn(SOURCE, `${rejected.length} detail page fetches failed`)
+  }
+
+  const events = results
+    .filter((r) => r.status === 'fulfilled')
+    .map((r) => r.value)
+    .filter(Boolean)
+
   log.info(SOURCE, 'scrape complete', { events: events.length })
   return events
 }

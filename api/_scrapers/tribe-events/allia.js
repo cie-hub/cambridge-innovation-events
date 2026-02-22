@@ -60,6 +60,9 @@ export function parseAllia($) {
       if (cat) categories.push(cat)
     })
 
+    const costEl = item.find('.tribe-events-cost, .tribe-events-event-cost').text().trim()
+    const cost = costEl ? (/free/i.test(costEl) ? 'Free' : costEl) : null
+
     events.push(
       normalizeEvent({
         title,
@@ -71,6 +74,7 @@ export function parseAllia($) {
         categories,
         time,
         imageUrl,
+        cost,
       })
     )
   })

@@ -8,6 +8,7 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
 import { parseDdMmYyyy } from '../_shared/dates.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const BASE_URL = 'https://www.wolfson.cam.ac.uk'
 const FEED_URL = `${BASE_URL}/whats/events-feed?field_event_type_target_id=961`
@@ -85,8 +86,11 @@ export function enrichWithApi(htmlEvents, apiEvents) {
 
   return htmlEvents.map(ev => {
     const apiMatch = apiByTitle.get(ev.title)
+    const desc = apiMatch ? decodeEntities(apiMatch.body) : ev.description
+    const { cost, access } = inferCostAccess(desc || '')
+
     if (!apiMatch) {
-      return { ...ev, location: 'Wolfson College, Cambridge' }
+      return { ...ev, description: desc, location: 'Wolfson College, Cambridge', cost, access }
     }
 
     const venue = decodeEntities(apiMatch.venue)
@@ -96,9 +100,11 @@ export function enrichWithApi(htmlEvents, apiEvents) {
 
     return {
       ...ev,
-      description: decodeEntities(apiMatch.body) || ev.description,
+      description: desc || ev.description,
       imageUrl: apiMatch.image_url ? decodeEntities(apiMatch.image_url) : ev.imageUrl,
       location,
+      cost,
+      access,
     }
   })
 }
@@ -136,6 +142,8 @@ export async function scrapeWolfsonCollege() {
       location: ev.location,
       time: ev.time,
       imageUrl: ev.imageUrl,
+      cost: ev.cost,
+      access: ev.access,
     })
   ).filter(Boolean)
 

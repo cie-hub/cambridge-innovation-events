@@ -8,7 +8,7 @@ const LOCATION = 'School of Clinical Medicine, Theo Chalmers Lecture Theatre'
 
 function extractTime(text) {
   const match = text.match(/(\d{1,2}[.:]\d{2}\s*(?:am|pm))/i)
-  return match ? match[1] : '9:30am'
+  return match ? match[1] : null
 }
 
 export function parseCrukLectures($) {
@@ -48,6 +48,7 @@ export function parseCrukLectures($) {
             location: LOCATION,
             time,
             categories: ['Healthcare', 'Research'],
+            cost: 'Free',
           })
         )
         i += 3

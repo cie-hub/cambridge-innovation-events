@@ -25,6 +25,7 @@ import { scrapeCambridgeEnterprise } from './custom/cambridge-enterprise.js'
 import { scrapeMeetupCambridge } from './meetup/meetup-cambridge.js'
 import { scrapeWolfsonCollege } from './custom/wolfson-college.js'
 import { scrapeCambridgeThinklab } from './ajax/cambridge-thinklab.js'
+import { scrapeHistoryEconomics } from './custom/history-economics.js'
 
 export const scrapers = {
   'cambridge-network': scrapeCambridgeNetwork,
@@ -54,4 +55,5 @@ export const scrapers = {
   'meetup-cambridge': scrapeMeetupCambridge,
   'wolfson-college': scrapeWolfsonCollege,
   'cambridge-thinklab': scrapeCambridgeThinklab,
+  'history-economics': scrapeHistoryEconomics,
 }

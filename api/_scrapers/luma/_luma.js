@@ -73,6 +73,16 @@ async function parseEntry(entry, source) {
   }
   if (!location && evt.location_type === 'zoom') location = 'Online (Zoom)'
 
+  let cost = null
+  const ticketInfo = entry?.ticket_info
+  if (ticketInfo) {
+    cost = ticketInfo.is_free ? 'Free' : null
+  }
+
+  const access = ticketInfo
+    ? (ticketInfo.require_approval ? 'Registration Required' : 'Open to All')
+    : null
+
   let description = ''
   if (evt.url) {
     try {
@@ -91,6 +101,8 @@ async function parseEntry(entry, source) {
     location,
     time,
     imageUrl: evt.cover_url || null,
+    cost,
+    access,
   })
 }
 
@@ -116,7 +128,7 @@ export async function scrapeLumaPage(url, source) {
   // Org page: extract calendar ID from __NEXT_DATA__, then use API
   const $ = await fetchPage(url)
   const nextDataScript = $('#__NEXT_DATA__').html()
-  if (!nextDataScript) return []
+  if (!nextDataScript) throw new Error(`Luma org page missing __NEXT_DATA__ script — page structure may have changed`)
 
   try {
     const data = JSON.parse(nextDataScript)

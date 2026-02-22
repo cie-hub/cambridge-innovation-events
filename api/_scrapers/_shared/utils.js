@@ -11,6 +11,7 @@
 import { createHash } from 'crypto'
 import * as cheerio from 'cheerio'
 import { classify } from './classifier.js'
+import { inferAccess } from './access.js'
 import { validateEvent } from './validate.js'
 
 /**
@@ -24,6 +25,20 @@ import { validateEvent } from './validate.js'
 export function hashEvent(title, date, source) {
   return createHash('sha256')
     .update(`${title}|${date}|${source}`)
+    .digest('hex')
+    .slice(0, 16)
+}
+
+/**
+ * Generates a source-independent hash from title + date only.
+ * Used to detect the same event scraped from different sources.
+ * @param {string} title - Event title
+ * @param {string} date - Date string (YYYY-MM-DD)
+ * @returns {string} 16-character hex hash
+ */
+export function contentHashEvent(title, date) {
+  return createHash('sha256')
+    .update(`${title}|${date}`)
     .digest('hex')
     .slice(0, 16)
 }
@@ -91,7 +106,7 @@ export function normalizeEvent({
   time,
   imageUrl,
 }) {
-  const validated = validateEvent({ title, description, date, source, location, time, imageUrl, sourceUrl }, source)
+  const validated = validateEvent({ title, description, date, source, location, time, imageUrl, sourceUrl, access }, source)
   if (!validated) return null
 
   const dateStr = typeof date === 'string' ? date.split('T')[0] : date
@@ -105,11 +120,12 @@ export function normalizeEvent({
     location: location ? sanitizeLocation(location) : '',
     categories: classify(title, description || ''),
     cost: cost || null,
-    access: access || null,
+    access: access || inferAccess(description || ''),
     time: normalizeTime(time),
     imageUrl: imageUrl || null,
     scrapedAt: new Date(),
     hash: hashEvent(title, dateStr, source),
+    contentHash: contentHashEvent(title, dateStr),
   }
 }
 

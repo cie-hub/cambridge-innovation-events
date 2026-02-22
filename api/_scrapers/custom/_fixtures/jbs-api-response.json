@@ -1,0 +1,78 @@
+{
+  "count": 5,
+  "current_count": 5,
+  "pages": 1,
+  "current_page": 1,
+  "post": [
+    {
+      "title": "Female Founders Day: Build, Grow, Scale",
+      "excerpt": "The 5th Female Founders Day celebrates the power of female-led mentoring.",
+      "permalink": "https://www.jbs.cam.ac.uk/events/female-founders-day-build-grow-scale/",
+      "audience": "Entrepreneurs",
+      "start_date": 1772024400,
+      "day": "05",
+      "month": "March",
+      "date": "05 March",
+      "time": "09:00-18:00",
+      "location": ["Cambridge, UK"],
+      "tbc": false,
+      "categoryField": "<div class=\"categories\"><span>Category: </span> <a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3285\">Accelerate Cambridge</a><a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3262\">Entrepreneurship events</a></div>"
+    },
+    {
+      "title": "Jumpstart your MBA journey: financing your studies",
+      "excerpt": "Join us to break down MBA costs, from tuition and living expenses.",
+      "permalink": "https://www.jbs.cam.ac.uk/events/jumpstart-your-mba-journey/",
+      "audience": "All",
+      "start_date": 1772020800,
+      "day": "25",
+      "month": "February",
+      "date": "25 February",
+      "time": "12:00-13:00",
+      "location": ["Online"],
+      "tbc": false,
+      "categoryField": "<div class=\"categories\"><span>Category: </span> <a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3267\">Admissions events</a><a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3287\">MBA admissions events</a></div>"
+    },
+    {
+      "title": "Transparency in supply chains",
+      "excerpt": "Join our climaTRACES workshop with Amirhassan Keshavarzzadeh.",
+      "permalink": "https://www.jbs.cam.ac.uk/events/transparency-in-supply-chains/",
+      "audience": "University of Cambridge alumni, University of Cambridge members, Cambridge Judge alumni",
+      "start_date": 1771849800,
+      "day": "23",
+      "month": "February",
+      "date": "23 February",
+      "time": "12:30-14:00",
+      "location": ["Cambridge, UK"],
+      "tbc": false,
+      "categoryField": "<div class=\"categories\"><span>Category: </span> <a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3691\">climaTRACES Lab events</a><a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3263\">Research seminars</a></div>"
+    },
+    {
+      "title": "Executive MBA in-person information session",
+      "excerpt": "Learn more about the Cambridge Executive MBA.",
+      "permalink": "https://www.jbs.cam.ac.uk/events/executive-mba-info/",
+      "audience": "All",
+      "start_date": 1772200800,
+      "day": "28",
+      "month": "February",
+      "date": "28 February",
+      "time": "10:00-12:00",
+      "location": ["Cambridge, UK"],
+      "tbc": false,
+      "categoryField": "<div class=\"categories\"><span>Category: </span> <a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3267\">Admissions events</a><a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3268\">Executive MBA admissions events</a></div>"
+    },
+    {
+      "title": "Energy Policy seminar: zonal electricity prices",
+      "excerpt": "Join our Energy Policy Research Group seminar.",
+      "permalink": "https://www.jbs.cam.ac.uk/events/energy-policy-zonal-prices/",
+      "audience": "All",
+      "start_date": 1771936200,
+      "day": "24",
+      "month": "February",
+      "date": "24 February",
+      "time": "12:30-13:30",
+      "location": ["Cambridge, UK"],
+      "tbc": false,
+      "categoryField": "<div class=\"categories\"><span>Category: </span> <a href=\"#\" data-field=\"category\" class=\"clickable-filter\" data-value=\"3289\">Energy Policy Research Group (EPRG) Energy and Environment seminars</a></div>"
+    }
+  ]
+}

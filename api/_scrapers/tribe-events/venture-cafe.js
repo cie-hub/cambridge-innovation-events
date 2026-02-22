@@ -54,7 +54,7 @@ export async function scrapeVentureCafe() {
   })
   if (!res.ok) throw new Error(`Venture Cafe fetch failed: ${res.status}`)
   const data = await res.json()
-  if (!data.events || !Array.isArray(data.events)) return []
+  if (!data.events || !Array.isArray(data.events)) throw new Error('Venture Cafe API response missing events array — Tribe Events schema may have changed')
 
   const events = data.events.map((evt) => {
     const startDate = new Date(evt.start_date)
@@ -77,6 +77,8 @@ export async function scrapeVentureCafe() {
       .trim()
       .slice(0, 500)
 
+    const cost = evt.cost ? (evt.cost.trim() || null) : null
+
     return normalizeEvent({
       title: evt.title,
       description,
@@ -86,6 +88,7 @@ export async function scrapeVentureCafe() {
       location,
       time,
       imageUrl: evt.image?.url || null,
+      cost,
     })
   }).filter(Boolean)
   log.info(SOURCE, 'scrape complete', { events: events.length })

@@ -1,6 +1,7 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
 import { parseDdMmYyyy } from '../_shared/dates.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const BASE_URL = 'https://www.stjohns.co.uk'
 const EVENTS_URL = `${BASE_URL}/events`
@@ -100,7 +101,9 @@ export function parseDetailPage($) {
     description = descParts.join(' ').slice(0, 500)
   }
 
-  return { time, location, description, imageUrl }
+  const { cost, access } = inferCostAccess(fullText)
+
+  return { time, location, description, imageUrl, cost, access }
 }
 
 /**
@@ -165,6 +168,8 @@ export async function scrapeStJohns() {
         imageUrl: detail.imageUrl || evt.imageUrl,
         time: detail.time,
         location: detail.location,
+        cost: detail.cost,
+        access: detail.access,
       })
     })
   )

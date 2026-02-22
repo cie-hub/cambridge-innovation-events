@@ -1,5 +1,6 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
+import { inferCostAccess } from '../_shared/access.js'
 
 const RSS_URL = 'http://webservices.admin.cam.ac.uk/events/api/programmes/11/calendar/events.rss'
 const SOURCE = 'cam-public-events'
@@ -32,23 +33,30 @@ function isBusinessRelevant(title, description) {
 async function fetchEventDetails(url) {
   const $ = await fetchPage(url)
   const summary = $('div.summary')
-  if (!summary.length) return { description: '', imageUrl: null }
+  if (!summary.length) return { description: '', imageUrl: null, cost: null }
 
-  // Description from <p> tags (skip dateRange, venueName, cost)
   const parts = []
+  let cost = null
   summary.find('p').each((_i, el) => {
     const p = $(el)
-    if (p.hasClass('dateRange') || p.hasClass('venueName') || p.hasClass('cost')) return
+    if (p.hasClass('cost')) {
+      const costText = p.text().trim().replace(/^cost:\s*/i, '')
+      if (costText) {
+        const inferred = inferCostAccess(costText)
+        cost = inferred.cost || costText
+      }
+      return
+    }
+    if (p.hasClass('dateRange') || p.hasClass('venueName')) return
     const text = p.text().trim()
     if (text) parts.push(text)
   })
   const description = parts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 500)
 
-  // Image from div.image img
   const imgSrc = summary.find('.image img').first().attr('src')
   const imageUrl = imgSrc || null
 
-  return { description, imageUrl }
+  return { description, imageUrl, cost }
 }
 
 export async function scrapeCamPublicEvents() {
@@ -116,26 +124,23 @@ export async function scrapeCamPublicEvents() {
   // Fetch descriptions and images from individual event pages
   const results = []
   for (const evt of unique) {
-    let description = ''
-    let imageUrl = null
-
+    let details = { description: '', imageUrl: null, cost: null }
     try {
-      const details = await fetchEventDetails(evt.sourceUrl)
-      if (details.description) description = details.description
-      if (details.imageUrl) imageUrl = details.imageUrl
+      details = await fetchEventDetails(evt.sourceUrl)
     } catch (err) { log.warn(SOURCE, 'detail fetch failed', { url: evt.sourceUrl, error: err.message }) }
 
     results.push(
       normalizeEvent({
         title: evt.title,
-        description,
+        description: details.description,
         date: evt.dateStr,
         source: SOURCE,
         sourceUrl: evt.sourceUrl,
         location: evt.location,
         time: evt.time,
-        imageUrl,
+        imageUrl: details.imageUrl,
         categories: ['Research'],
+        cost: details.cost,
       })
     )
   }

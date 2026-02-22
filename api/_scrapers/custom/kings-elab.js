@@ -88,17 +88,23 @@ export function parseDetailPage($) {
   }
 
   const descParts = []
+  let cost = null
   $('div.sqs-block-content p, div.sqs-block-content h4').each((_i, el) => {
     const text = $(el).text().trim()
-    if (text && !text.startsWith('WHEN:') && !text.startsWith('WHERE:') && !text.startsWith('TICKETS:')) {
-      descParts.push(text)
+    if (!text) return
+    if (text.startsWith('TICKETS:')) {
+      cost = text.replace(/^TICKETS:\s*/i, '').trim()
+      if (/free/i.test(cost)) cost = 'Free'
+      return
     }
+    if (text.startsWith('WHEN:') || text.startsWith('WHERE:')) return
+    descParts.push(text)
   })
   if (descParts.length > 0) {
     description = descParts.join(' ').slice(0, 500)
   }
 
-  return { time, location, description, imageUrl, endDate }
+  return { time, location, description, imageUrl, endDate, cost }
 }
 
 /**
@@ -174,6 +180,7 @@ export async function scrapeKingsElab() {
         categories: evt.categories,
         time: detail.time,
         location: detail.location,
+        cost: detail.cost,
       })
     })
   )

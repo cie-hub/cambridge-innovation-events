@@ -127,6 +127,18 @@ function EventCard({ event, onSelect }) {
                   <span>{event.location}</span>
                 </div>
               )}
+              {event.cost && (
+                <div className="event-card__detail-row">
+                  <span className="event-card__detail-label">Cost</span>
+                  <span>{event.cost}</span>
+                </div>
+              )}
+              {event.access && (
+                <div className="event-card__detail-row">
+                  <span className="event-card__detail-label">Access</span>
+                  <span>{event.access}</span>
+                </div>
+              )}
             </div>
             <div className="event-card__detail-row">
               <a

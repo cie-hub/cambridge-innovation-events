@@ -157,6 +157,7 @@ export async function scrapeCambridgeThinklab() {
       time: evt.time,
       location: evt.location,
       imageUrl: evt.imageUrl,
+      cost: 'Free',
     }))
     .filter(Boolean)
 

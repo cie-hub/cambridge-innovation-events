@@ -38,6 +38,20 @@ describe('normalizeEvent', () => {
     spy.mockRestore()
   })
 
+  it('includes a contentHash based on title and date only (no source)', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const eventA = normalizeEvent({
+      title: 'Same Talk', date: '2026-03-15', source: 'source-a', sourceUrl: 'https://a.com',
+    })
+    const eventB = normalizeEvent({
+      title: 'Same Talk', date: '2026-03-15', source: 'source-b', sourceUrl: 'https://b.com',
+    })
+    expect(eventA.contentHash).toBeDefined()
+    expect(eventA.contentHash).toBe(eventB.contentHash)
+    expect(eventA.hash).not.toBe(eventB.hash)
+    spy.mockRestore()
+  })
+
   it('assigns categories from title and description via TF-IDF', () => {
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
     const event = normalizeEvent({

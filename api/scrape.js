@@ -21,6 +21,8 @@ export function buildScrapeHandler({ getAllSourceIds }) {
     const eventsCol = db.collection('events')
     const sourcesCol = db.collection('sources')
 
+    await eventsCol.createIndex({ contentHash: 1 }, { sparse: true, background: true })
+
     const results = {}
 
     for (const sourceId of sourceIds) {
@@ -35,9 +37,7 @@ export function buildScrapeHandler({ getAllSourceIds }) {
 
       try {
         const rawEvents = await scrapeFn()
-        const events = rawEvents.filter(Boolean).filter(
-          (e) => !/^private\s+(meeting|event)$/i.test(e.title?.trim())
-        )
+        const events = rawEvents.filter(Boolean)
 
         // Remove stale events for this source before upserting fresh data
         const freshHashes = new Set(events.map((e) => e.hash))
@@ -78,6 +78,19 @@ export function buildScrapeHandler({ getAllSourceIds }) {
     // Remove events from deregistered sources
     const allRegistered = Object.values(batches).flat()
     await eventsCol.deleteMany({ source: { $nin: allRegistered } })
+
+    // Cross-source dedup: for each contentHash with multiple sources, keep latest scraped
+    const duplicates = await eventsCol.aggregate([
+      { $match: { contentHash: { $ne: null } } },
+      { $group: { _id: '$contentHash', count: { $sum: 1 }, docs: { $push: { id: '$_id', scrapedAt: '$scrapedAt' } } } },
+      { $match: { count: { $gt: 1 } } },
+    ]).toArray()
+
+    for (const dup of duplicates) {
+      const sorted = dup.docs.sort((a, b) => new Date(b.scrapedAt) - new Date(a.scrapedAt))
+      const idsToRemove = sorted.slice(1).map(d => d.id)
+      await eventsCol.deleteMany({ _id: { $in: idsToRemove } })
+    }
 
     return res.status(200).json({ sources: sourceIds.length, results })
   }

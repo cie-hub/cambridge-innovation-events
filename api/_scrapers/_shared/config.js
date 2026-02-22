@@ -9,7 +9,7 @@ export const batches = {
   3: ['venture-cafe', 'allia', 'cambridge-wireless'],
   4: ['luma-cffn', 'luma-cue', 'luma-cament'],
   5: ['talks-cam', 'cruk-lectures', 'eventbrite-cambridge', 'makespace', 'cam-public-events'],
-  6: ['ifm-events', 'cambridge-enterprise', 'wolfson-college'],
+  6: ['ifm-events', 'cambridge-enterprise', 'wolfson-college', 'history-economics'],
   7: ['meetup-cambridge'],
 }
 
@@ -25,8 +25,8 @@ export const sources = {
   },
   'judge-business-school': {
     name: 'Cambridge Judge Business School',
-    url: 'https://www.jbs.cam.ac.uk/entrepreneurship',
-    description: 'Accelerate Cambridge, EnterpriseTECH, talks, panels, demo days',
+    url: 'https://www.jbs.cam.ac.uk/events/',
+    description: 'Research seminars, entrepreneurship events, and workshops (excludes admissions)',
   },
   'bradfield-centre': {
     name: 'The Bradfield Centre',
@@ -148,4 +148,17 @@ export const sources = {
     url: 'https://www.thinklab.strategic-partnerships.admin.cam.ac.uk/events/',
     description: 'University of Cambridge ThinkLab research impact events and talks',
   },
+  'history-economics': {
+    name: 'History and Economics Seminar',
+    url: 'https://www.hist.cam.ac.uk/event-series/history-and-economics',
+    description: 'Cambridge History and Economics seminars and Joint Harvard Center online seminars',
+  },
 }
+
+/**
+ * Location patterns that cause events to be rejected during validation.
+ * Add new patterns here to exclude events from specific cities.
+ */
+export const bannedLocationPatterns = [
+  /\blondon\b/i,
+]
