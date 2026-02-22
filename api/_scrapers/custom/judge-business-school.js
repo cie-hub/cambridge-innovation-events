@@ -1,8 +1,6 @@
 import { normalizeEvent, fetchPage } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
 import { parseDateFromBrHtml } from '../_shared/dates.js'
-import { inferCostAccess } from '../_shared/access.js'
-
 const BASE_URL = 'https://www.jbs.cam.ac.uk'
 const EVENTS_URL = `${BASE_URL}/entrepreneurship/programmes/accelerate-cambridge/events/`
 const SOURCE = 'judge-business-school'
@@ -89,7 +87,6 @@ export async function scrapeJudgeBusinessSchool() {
     listings.map(async (evt) => {
       const detail$ = await fetchPage(evt.sourceUrl)
       const detail = parseDetailPage(detail$)
-      const { cost, access } = inferCostAccess(evt.description)
       return normalizeEvent({
         title: evt.title,
         description: evt.description,
@@ -100,8 +97,8 @@ export async function scrapeJudgeBusinessSchool() {
         imageUrl: detail.imageUrl,
         time: detail.time,
         location: detail.location,
-        cost,
-        access,
+        cost: 'Free',
+        access: 'Registration Required',
       })
     })
   )
