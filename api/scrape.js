@@ -35,9 +35,7 @@ export function buildScrapeHandler({ getAllSourceIds }) {
 
       try {
         const rawEvents = await scrapeFn()
-        const events = rawEvents.filter(Boolean).filter(
-          (e) => !/^private\s+(meeting|event)$/i.test(e.title?.trim())
-        )
+        const events = rawEvents.filter(Boolean)
 
         // Remove stale events for this source before upserting fresh data
         const freshHashes = new Set(events.map((e) => e.hash))
