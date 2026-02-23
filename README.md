@@ -4,7 +4,7 @@ One page of links to every innovation, startup, and research event in Cambridge.
 
 This is not an event platform. We don't host, organise, or own any events. This is a curated collection of links, scraped from 25 sources across the Cambridge innovation ecosystem and presented on a single, filterable page.
 
-**Live:** [events.chepaldin.com](https://events.chepaldin.com)
+**Live:** [camevents.org](https://camevents.org/))
 
 ## The Channellable Design Principles
 
