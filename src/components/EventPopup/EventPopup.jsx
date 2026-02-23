@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { formatSource } from '../../utils/formatSource'
 import { trimToLastSentence } from '../../utils/truncateText'
+import { linkify } from '../../utils/linkify'
 import { formatFullDate } from '../../utils/dateUtils'
 import { useBookmarkContext } from '../../context/BookmarkContext'
 import BookmarkIcon from '../BookmarkIcon'
@@ -74,7 +75,7 @@ export default function EventPopup({ event, onClose }) {
 
           {event.description && (
             <p className="event-popup__desc">
-              {description || event.description}
+              {linkify(description || event.description)}
               {description && <span className="event-popup__more">...</span>}
             </p>
           )}

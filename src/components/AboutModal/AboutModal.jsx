@@ -52,11 +52,9 @@ export default function AboutModal() {
                   GitHub
                 </a>.
               </p>
-              <p>
-                The site currently lives on the developer's personal domain
-                (chepaldin.com) as an experiment. If it proves useful, it can
-                move to its own.
-              </p>
+              <button className="about-modal__dismiss" onClick={handleClose}>
+                Explore events
+              </button>
             </div>
           </div>
         </div>

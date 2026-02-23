@@ -1,5 +1,6 @@
 import { truncateAtSentence, trimToLastSentence } from '../../utils/truncateText'
 import { MAX_DESC_LENGTH } from '../../config/constants'
+import { linkify } from '../../utils/linkify'
 
 export default function EventDescription({ text, truncate }) {
   if (!text) return null
@@ -10,7 +11,7 @@ export default function EventDescription({ text, truncate }) {
 
   return (
     <p className="event-card__desc">
-      {processed || text}
+      {linkify(processed || text)}
       {processed && <span className="event-card__more">...</span>}
     </p>
   )

@@ -8,8 +8,16 @@ const PLATFORM_SOURCES = new Set([
   'eagle-labs',
 ])
 
+// Titles shorter than this before " - " are likely compound names, not suffixes
+const MIN_PREFIX_FOR_DASH_STRIP = 20
+
 function normalizeTitle(title) {
-  return title
+  let t = title.trim()
+  const dashIdx = t.lastIndexOf(' - ')
+  if (dashIdx > MIN_PREFIX_FOR_DASH_STRIP) {
+    t = t.slice(0, dashIdx)
+  }
+  return t
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, '')
     .replace(/\s+/g, ' ')

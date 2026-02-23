@@ -58,6 +58,23 @@ describe('dedup', () => {
     expect(result).toHaveLength(1)
   })
 
+  it('deduplicates titles with speaker suffix against base title', () => {
+    const events = [
+      { title: 'What is Digital Identity all about?', date: new Date('2026-03-02'), source: 'talks-cam' },
+      { title: 'What is Digital Identity all about? - Professor Jon Crowcroft FRS', date: new Date('2026-03-02'), source: 'cam-public-events' },
+    ]
+    const result = dedup(events)
+    expect(result).toHaveLength(1)
+  })
+
+  it('does not strip dash from short titles', () => {
+    const events = [
+      { title: 'AI - Ethics', date: new Date('2026-03-01'), source: 'talks-cam' },
+      { title: 'AI - Workshop', date: new Date('2026-03-01'), source: 'cam-public-events' },
+    ]
+    expect(dedup(events)).toHaveLength(2)
+  })
+
   it('returns empty array for empty input', () => {
     expect(dedup([])).toEqual([])
   })

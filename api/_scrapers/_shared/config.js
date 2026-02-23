@@ -161,4 +161,5 @@ export const sources = {
  */
 export const bannedLocationPatterns = [
   /\blondon\b/i,
+  /\bolympia\b/i,
 ]

@@ -132,6 +132,27 @@
   opacity: 0.7;
 }
 
+.about-modal__dismiss {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-md);
+  padding: 10px;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.about-modal__dismiss:hover {
+  border-color: var(--color-pink);
+  color: var(--color-pink);
+}
+
 /* -- Mobile -- */
 
 @media (max-width: 600px) {
