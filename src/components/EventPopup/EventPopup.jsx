@@ -3,6 +3,7 @@ import { formatSource } from '../../utils/formatSource'
 import { trimToLastSentence } from '../../utils/truncateText'
 import { linkify } from '../../utils/linkify'
 import { formatFullDate } from '../../utils/dateUtils'
+import { trackClick } from '../../utils/trackClick'
 import { useBookmarkContext } from '../../context/BookmarkContext'
 import BookmarkIcon from '../BookmarkIcon'
 import './EventPopup.css'
@@ -46,6 +47,7 @@ export default function EventPopup({ event, onClose }) {
             href={event.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackClick(event._id)}
           >
             {event.title}
           </a>
@@ -94,6 +96,7 @@ export default function EventPopup({ event, onClose }) {
               href={event.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackClick(event._id)}
             >
               View on {formatSource(event.source)} &rarr;
             </a>
