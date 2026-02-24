@@ -46,7 +46,13 @@ describe('POST /api/track', () => {
     const res = { status: vi.fn().mockReturnThis(), end: vi.fn() }
     await handler({ method: 'POST', body: { eventId: '507f1f77bcf86cd799439011' } }, res)
     expect(res.status).toHaveBeenCalledWith(204)
-    expect(mockUpdateOne).toHaveBeenCalledOnce()
-    expect(mockInsertOne).toHaveBeenCalledOnce()
+    expect(mockUpdateOne).toHaveBeenCalledWith(
+      { _id: expect.any(Object) },
+      { $inc: { clicks: 1 } }
+    )
+    expect(mockInsertOne).toHaveBeenCalledWith({
+      eventId: expect.any(Object),
+      timestamp: expect.any(Date),
+    })
   })
 })

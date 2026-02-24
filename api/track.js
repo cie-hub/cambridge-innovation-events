@@ -7,13 +7,17 @@ export default async function handler(req, res) {
   const { eventId } = req.body || {}
   if (!eventId || !ObjectId.isValid(eventId)) return res.status(400).end()
 
-  const db = await getDb()
-  const oid = new ObjectId(eventId)
+  try {
+    const db = await getDb()
+    const oid = new ObjectId(eventId)
 
-  await Promise.all([
-    db.collection('events').updateOne({ _id: oid }, { $inc: { clicks: 1 } }),
-    db.collection('clicks').insertOne({ eventId: oid, timestamp: new Date() }),
-  ])
+    await Promise.all([
+      db.collection('events').updateOne({ _id: oid }, { $inc: { clicks: 1 } }),
+      db.collection('clicks').insertOne({ eventId: oid, timestamp: new Date() }),
+    ])
 
-  return res.status(204).end()
+    return res.status(204).end()
+  } catch {
+    return res.status(500).end()
+  }
 }
