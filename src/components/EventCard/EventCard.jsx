@@ -4,6 +4,7 @@ import { formatFullDate } from '../../utils/dateUtils'
 import { useBookmarkContext } from '../../context/BookmarkContext'
 import BookmarkIcon from '../BookmarkIcon'
 import EventDescription from './EventDescription'
+import { trackClick } from '../../utils/trackClick'
 import './EventCard.css'
 
 function EventCard({ event, onSelect }) {
@@ -50,6 +51,7 @@ function EventCard({ event, onSelect }) {
               href={event.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackClick(event._id)}
             >
               {event.title}
             </a>
@@ -134,6 +136,7 @@ function EventCard({ event, onSelect }) {
                 href={event.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackClick(event._id)}
               >
                 View on {formatSource(event.source)} &rarr;
               </a>
