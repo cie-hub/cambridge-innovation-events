@@ -42,11 +42,6 @@ export function filterAndParseApiEvents(posts) {
     .filter(Boolean)
 }
 
-/**
- * Extracts venue, image, and description from a JBS event detail page.
- * @param {import('cheerio').CheerioAPI} $ - Cheerio-loaded DOM
- * @returns {{ location: string|null, imageUrl: string|null, description: string }}
- */
 export function parseDetailPage($) {
   const location = $('p.event-address.main.bold').first().text().trim() || null
 
@@ -57,12 +52,12 @@ export function parseDetailPage($) {
 
   const descParts = []
   $('.cjbs-event > div.wp-block-group').each((_i, el) => {
-    $(el).find('p, h3').each((_j, child) => {
+    $(el).find('p, h3, li').each((_j, child) => {
       const text = $(child).text().trim()
       if (text.length > 10) descParts.push(text)
     })
   })
-  const description = descParts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 500)
+  const description = descParts.join(' ').replace(/\s+/g, ' ').trim()
 
   return { location, imageUrl, description }
 }

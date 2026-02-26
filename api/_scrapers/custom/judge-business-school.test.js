@@ -137,4 +137,35 @@ describe('parseDetailPage', () => {
     expect(detail.description).toContain('Speaker: Dr Jane Smith')
     expect(detail.description).toContain('supply chain transparency')
   })
+
+  it('includes li text from wp-block-group', () => {
+    const $ = cheerio.load(`
+      <div class="cjbs-event">
+        <div class="cjbs-event-top-container"></div>
+        <div class="wp-block-group">
+          <p>Introduction paragraph text for context.</p>
+          <ul>
+            <li>Session one: deep dive into product-market fit</li>
+            <li>Session two: investor readiness frameworks</li>
+          </ul>
+        </div>
+      </div>
+    `)
+    const detail = parseDetailPage($)
+    expect(detail.description).toContain('product-market fit')
+    expect(detail.description).toContain('investor readiness frameworks')
+  })
+
+  it('description is not pre-truncated beyond 800 chars', () => {
+    const longText = 'a'.repeat(900)
+    const $ = cheerio.load(`
+      <div class="cjbs-event">
+        <div class="wp-block-group">
+          <p>${longText}</p>
+        </div>
+      </div>
+    `)
+    const detail = parseDetailPage($)
+    expect(detail.description.length).toBe(900)
+  })
 })
