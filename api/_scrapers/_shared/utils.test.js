@@ -68,6 +68,49 @@ describe('normalizeEvent', () => {
   })
 })
 
+describe('normalizeEvent HTML entity decoding', () => {
+  const base = {
+    date: '2026-03-04',
+    source: 'test-source',
+    sourceUrl: 'https://example.com',
+  }
+
+  it('decodes numeric HTML entities in title', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const event = normalizeEvent({ ...base, title: 'Pitch &#8211; Winter 2026' })
+    expect(event.title).toBe('Pitch – Winter 2026')
+    spy.mockRestore()
+  })
+
+  it('decodes named HTML entities in title', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const event = normalizeEvent({ ...base, title: 'Tech &amp; Innovation' })
+    expect(event.title).toBe('Tech & Innovation')
+    spy.mockRestore()
+  })
+
+  it('decodes numeric HTML entities in description', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const event = normalizeEvent({ ...base, title: 'Test Event', description: 'Building at the intersection &#8211; while exciting' })
+    expect(event.description).toBe('Building at the intersection – while exciting')
+    spy.mockRestore()
+  })
+
+  it('leaves plain text unchanged', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const event = normalizeEvent({ ...base, title: 'Normal Title' })
+    expect(event.title).toBe('Normal Title')
+    spy.mockRestore()
+  })
+
+  it('decodes HTML entities in location', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const event = normalizeEvent({ ...base, title: 'Test Event', location: 'Caf&#233; Cambridge' })
+    expect(event.location).toBe('Café Cambridge')
+    spy.mockRestore()
+  })
+})
+
 describe('normalizeEvent validation', () => {
   it('returns null when title is missing', () => {
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {})

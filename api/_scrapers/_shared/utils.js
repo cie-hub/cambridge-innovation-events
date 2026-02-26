@@ -65,13 +65,19 @@ function normalizeTime(time) {
   return convertToken(time)
 }
 
-function sanitizeLocation(str) {
+function decodeEntities(str) {
+  if (!str) return str
   return str
-    .replace(/&#(\d+);/g, (_m, code) => String.fromCharCode(code))
+    .replace(/&#(\d+);/g, (_m, code) => String.fromCharCode(parseInt(code, 10)))
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+}
+
+function sanitizeLocation(str) {
+  return decodeEntities(str)
     .replace(/[\t\n\r]+/g, ' ')
     .replace(/\s{2,}/g, ' ')
     .trim()
@@ -111,8 +117,8 @@ export function normalizeEvent({
 
   const dateStr = typeof date === 'string' ? date.split('T')[0] : date
   return {
-    title,
-    description: description || '',
+    title: decodeEntities(title),
+    description: decodeEntities(description) || '',
     date: new Date(date),
     endDate: endDate ? new Date(endDate) : null,
     source,
