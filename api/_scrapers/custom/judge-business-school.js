@@ -102,13 +102,27 @@ export async function scrapeJudgeBusinessSchool() {
   const listings = filterAndParseApiEvents(data.post)
   log.info(SOURCE, `found ${listings.length} non-admissions events, fetching details`)
 
+  let acMap = new Map()
+  if (listings.some(l => l.isAccelerateCambridge)) {
+    const ac$ = await fetchPage(ACCELERATE_EVENTS_URL)
+    acMap = parseAcEventListings(ac$)
+    log.info(SOURCE, 'fetched AC programme page', { acEntries: acMap.size })
+  }
+
   const results = await Promise.allSettled(
     listings.map(async (evt) => {
       const detail$ = await fetchPage(evt.sourceUrl)
       const detail = parseDetailPage(detail$)
+      const description = assembleDescription(
+        detail.description,
+        evt.excerpt,
+        evt.isAccelerateCambridge,
+        evt.title,
+        acMap,
+      )
       return normalizeEvent({
         title: evt.title,
-        description: detail.description,
+        description,
         date: evt.date,
         source: SOURCE,
         sourceUrl: evt.sourceUrl,
