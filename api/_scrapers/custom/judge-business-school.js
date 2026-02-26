@@ -52,7 +52,7 @@ export function parseDetailPage($) {
     : null
 
   const descParts = []
-  $('.cjbs-event > div.wp-block-group').each((_i, el) => {
+  $('main .wp-block-group').each((_i, el) => {
     $(el).find('p, h3, li').each((_j, child) => {
       const text = $(child).text().trim()
       if (text.length > 10) descParts.push(text)
