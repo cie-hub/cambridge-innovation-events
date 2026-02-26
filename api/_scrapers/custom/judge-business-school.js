@@ -81,6 +81,9 @@ export function assembleDescription(detailDescription, excerpt, isAccelerateCamb
     }
     return (acExcerpt || detailDescription || excerpt).slice(0, 800)
   }
+  if (excerpt && detailDescription) {
+    return (excerpt + ' ' + detailDescription).slice(0, 800)
+  }
   return (detailDescription || excerpt).slice(0, 800)
 }
 

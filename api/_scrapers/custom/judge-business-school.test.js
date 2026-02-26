@@ -201,12 +201,16 @@ describe('parseAcEventListings', () => {
 })
 
 describe('assembleDescription', () => {
-  it('returns detailDescription for non-AC events', () => {
-    expect(assembleDescription('Detail text here.', 'API excerpt', false, '', new Map())).toBe('Detail text here.')
+  it('combines excerpt and detail for non-AC events', () => {
+    expect(assembleDescription('Detail text here.', 'API excerpt', false, '', new Map())).toBe('API excerpt Detail text here.')
   })
 
   it('falls back to excerpt for non-AC events when detail is empty', () => {
     expect(assembleDescription('', 'API excerpt fallback', false, '', new Map())).toBe('API excerpt fallback')
+  })
+
+  it('returns detailDescription for non-AC events when excerpt is empty', () => {
+    expect(assembleDescription('Some detail text here.', '', false, '', new Map())).toBe('Some detail text here.')
   })
 
   it('prepends AC excerpt to detail description for AC events', () => {
@@ -227,6 +231,11 @@ describe('assembleDescription', () => {
   it('truncates the combined result to 800 chars', () => {
     const map = new Map([['ev', 'x'.repeat(200)]])
     const result = assembleDescription('y'.repeat(700), '', true, 'ev', map)
+    expect(result.length).toBe(800)
+  })
+
+  it('truncates combined excerpt+detail to 800 chars for non-AC events', () => {
+    const result = assembleDescription('y'.repeat(700), 'x'.repeat(200), false, '', new Map())
     expect(result.length).toBe(800)
   })
 })
