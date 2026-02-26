@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import Header from './components/Header/Header'
@@ -22,6 +22,46 @@ function AppContent() {
     useFilters(events)
 
   const filtered = applyFilters(events, bookmarks)
+
+  useEffect(() => {
+    if (!events.length) return
+
+    const existing = document.getElementById('ld-json')
+    if (existing) existing.remove()
+
+    const script = document.createElement('script')
+    script.id = 'ld-json'
+    script.type = 'application/ld+json'
+    script.text = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Cambridge Innovation Events',
+      description: 'Innovation, startup, and research events across Cambridge scraped from 26 sources.',
+      url: 'https://camevents.org',
+      itemListElement: events.slice(0, 100).map((event, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'Event',
+          name: event.title,
+          startDate: event.date,
+          url: event.sourceUrl,
+          location: event.location
+            ? { '@type': 'Place', name: event.location }
+            : undefined,
+          organizer: {
+            '@type': 'Organization',
+            name: event.source,
+          },
+        },
+      })),
+    })
+    document.head.appendChild(script)
+
+    return () => {
+      document.getElementById('ld-json')?.remove()
+    }
+  }, [events])
 
   return (
     <div className="app">
