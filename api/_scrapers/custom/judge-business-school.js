@@ -7,6 +7,7 @@ const FETCH_TIMEOUT_MS = 15_000
 
 const ADMISSIONS_CATEGORY_IDS = new Set(['3267', '3287', '3268', '3269', '3270'])
 const ACCELERATE_CATEGORY_ID = '3285'
+const ACCELERATE_EVENTS_URL = 'https://www.jbs.cam.ac.uk/entrepreneurship/programmes/accelerate-cambridge/events/'
 
 function parseCatIds(categoryField) {
   return [...(categoryField || '').matchAll(/data-value="(\d+)"/g)].map(m => m[1])
@@ -60,6 +61,16 @@ export function parseDetailPage($) {
   const description = descParts.join(' ').replace(/\s+/g, ' ').trim()
 
   return { location, imageUrl, description }
+}
+
+export function parseAcEventListings($) {
+  const map = new Map()
+  $('.b06Box').each((_i, el) => {
+    const title = $(el).find('.b06EventTitle').text().trim()
+    const excerpt = $(el).find('.b06EventExcerpt').text().trim()
+    if (title && excerpt) map.set(title.toLowerCase(), excerpt)
+  })
+  return map
 }
 
 export async function scrapeJudgeBusinessSchool() {

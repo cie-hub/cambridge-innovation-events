@@ -4,12 +4,13 @@ import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import * as cheerio from 'cheerio'
-import { filterAndParseApiEvents, parseDetailPage } from './judge-business-school.js'
+import { filterAndParseApiEvents, parseDetailPage, parseAcEventListings } from './judge-business-school.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const apiFixture = JSON.parse(
   readFileSync(resolve(__dirname, '_fixtures/jbs-api-response.json'), 'utf-8')
 )
+const acFixture = readFileSync(resolve(__dirname, '_fixtures/ac-programme-events.html'), 'utf-8')
 
 describe('filterAndParseApiEvents', () => {
   it('filters out admissions events', () => {
@@ -167,5 +168,27 @@ describe('parseDetailPage', () => {
     `)
     const detail = parseDetailPage($)
     expect(detail.description.length).toBe(900)
+  })
+})
+
+describe('parseAcEventListings', () => {
+  it('builds a lowercase title→excerpt map from .b06Box cards', () => {
+    const $ = cheerio.load(acFixture)
+    const map = parseAcEventListings($)
+    expect(map.size).toBe(2)
+    expect(map.get('female founders day: build, grow, scale')).toBe(
+      'A flagship Accelerate Cambridge event celebrating female-led ventures with mentoring sessions and investor pitches.'
+    )
+  })
+
+  it('lowercases keys for case-insensitive lookup', () => {
+    const $ = cheerio.load(acFixture)
+    const map = parseAcEventListings($)
+    expect(map.has('pitch and judge #5 – spring 2026')).toBe(true)
+  })
+
+  it('returns empty map when page has no b06Box cards', () => {
+    const $ = cheerio.load('<div>Nothing here</div>')
+    expect(parseAcEventListings($).size).toBe(0)
   })
 })
