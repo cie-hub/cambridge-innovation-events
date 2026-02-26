@@ -6,16 +6,16 @@ const SOURCE = 'judge-business-school'
 const FETCH_TIMEOUT_MS = 15_000
 
 const ADMISSIONS_CATEGORY_IDS = new Set(['3267', '3287', '3268', '3269', '3270'])
+const ACCELERATE_CATEGORY_ID = '3285'
 
-/**
- * Filters out admissions events and parses API response into listing objects.
- * @param {Object[]} posts - Array of event objects from the JBS API
- * @returns {{ title: string, date: string, time: string|null, sourceUrl: string, categories: string[], access: string|null }[]}
- */
+function parseCatIds(categoryField) {
+  return [...(categoryField || '').matchAll(/data-value="(\d+)"/g)].map(m => m[1])
+}
+
 export function filterAndParseApiEvents(posts) {
   return posts
     .filter((post) => {
-      const catIds = [...(post.categoryField || '').matchAll(/data-value="(\d+)"/g)].map(m => m[1])
+      const catIds = parseCatIds(post.categoryField)
       return !catIds.some(id => ADMISSIONS_CATEGORY_IDS.has(id))
     })
     .map((post) => {
@@ -23,19 +23,20 @@ export function filterAndParseApiEvents(posts) {
       if (isNaN(dateObj.getTime())) return null
       const date = dateObj.toISOString().split('T')[0]
 
+      const catIds = parseCatIds(post.categoryField)
       const catNames = [...(post.categoryField || '').matchAll(/data-value="\d+">(.*?)</g)]
         .map(m => m[1].trim())
         .filter(Boolean)
 
-      const access = 'Public'
-
       return {
         title: post.title?.replace(/&amp;/g, '&'),
+        excerpt: post.excerpt?.trim() || '',
         date,
         time: post.tbc ? null : (post.time || null),
         sourceUrl: post.permalink,
         categories: catNames,
-        access,
+        access: 'Public',
+        isAccelerateCambridge: catIds.includes(ACCELERATE_CATEGORY_ID),
       }
     })
     .filter(Boolean)

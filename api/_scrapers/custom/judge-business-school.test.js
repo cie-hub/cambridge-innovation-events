@@ -52,6 +52,30 @@ describe('filterAndParseApiEvents', () => {
       expect(ev.access).toBe('Public')
     }
   })
+
+  it('passes through the API excerpt', () => {
+    const events = filterAndParseApiEvents(apiFixture.post)
+    const female = events.find(e => e.title.includes('Female Founders'))
+    expect(female.excerpt).toBe('The 5th Female Founders Day celebrates the power of female-led mentoring.')
+  })
+
+  it('sets isAccelerateCambridge: true for events with category 3285', () => {
+    const events = filterAndParseApiEvents(apiFixture.post)
+    const female = events.find(e => e.title.includes('Female Founders'))
+    expect(female.isAccelerateCambridge).toBe(true)
+  })
+
+  it('sets isAccelerateCambridge: false for non-AC events', () => {
+    const events = filterAndParseApiEvents(apiFixture.post)
+    const energy = events.find(e => e.title.includes('Energy Policy'))
+    expect(energy.isAccelerateCambridge).toBe(false)
+  })
+
+  it('keeps permalink as sourceUrl for AC events', () => {
+    const events = filterAndParseApiEvents(apiFixture.post)
+    const female = events.find(e => e.title.includes('Female Founders'))
+    expect(female.sourceUrl).toBe('https://www.jbs.cam.ac.uk/events/female-founders-day-build-grow-scale/')
+  })
 })
 
 describe('parseDetailPage', () => {
