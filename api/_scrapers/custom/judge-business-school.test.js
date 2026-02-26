@@ -82,7 +82,7 @@ describe('filterAndParseApiEvents', () => {
 describe('parseDetailPage', () => {
   it('extracts venue from p.event-address.main.bold', () => {
     const $ = cheerio.load(`
-      <div class="cjbs-event">
+      <main>
         <div class="cjbs-event-top-container">
           <div class="cjbs-event-content">
             <div class="location content-item">
@@ -95,7 +95,7 @@ describe('parseDetailPage', () => {
         <div class="wp-block-group">
           <p>Speaker info and description text here that is long enough.</p>
         </div>
-      </div>
+      </main>
       <meta property="og:image" content="https://www.jbs.cam.ac.uk/wp-content/uploads/2025/event-image.jpg" />
     `)
     const detail = parseDetailPage($)
@@ -104,7 +104,7 @@ describe('parseDetailPage', () => {
 
   it('extracts og:image and skips default logo', () => {
     const $ = cheerio.load(`
-      <div class="cjbs-event"></div>
+      <main></main>
       <meta property="og:image" content="https://www.jbs.cam.ac.uk/wp-content/uploads/2025/event-image.jpg" />
     `)
     const detail = parseDetailPage($)
@@ -113,18 +113,16 @@ describe('parseDetailPage', () => {
 
   it('returns null imageUrl for the default JBS logo', () => {
     const $ = cheerio.load(`
-      <div class="cjbs-event"></div>
+      <main></main>
       <meta property="og:image" content="https://www.jbs.cam.ac.uk/wp-content/uploads/2024/11/cjbs-logo-with-shield-on-yellow-1200x675-1.jpg" />
     `)
     const detail = parseDetailPage($)
     expect(detail.imageUrl).toBeNull()
   })
 
-  it('extracts description from .cjbs-event > div.wp-block-group paragraphs', () => {
+  it('extracts description from main .wp-block-group paragraphs', () => {
     const $ = cheerio.load(`
-      <div class="cjbs-event">
-        <div class="cjbs-event-top-container"></div>
-        <div class="cjbs-event-bottom-container"></div>
+      <main>
         <div class="wp-block-group">
           <h3>Speaker: Dr Jane Smith, University of Cambridge</h3>
           <p>This workshop explores advanced methods in supply chain transparency.</p>
@@ -132,17 +130,16 @@ describe('parseDetailPage', () => {
         <div class="wp-block-group">
           <p>No registration required.</p>
         </div>
-      </div>
+      </main>
     `)
     const detail = parseDetailPage($)
     expect(detail.description).toContain('Speaker: Dr Jane Smith')
     expect(detail.description).toContain('supply chain transparency')
   })
 
-  it('includes li text from wp-block-group', () => {
+  it('includes li text from wp-block-group inside main', () => {
     const $ = cheerio.load(`
-      <div class="cjbs-event">
-        <div class="cjbs-event-top-container"></div>
+      <main>
         <div class="wp-block-group">
           <p>Introduction paragraph text for context.</p>
           <ul>
@@ -150,24 +147,34 @@ describe('parseDetailPage', () => {
             <li>Session two: investor readiness frameworks</li>
           </ul>
         </div>
-      </div>
+      </main>
     `)
     const detail = parseDetailPage($)
     expect(detail.description).toContain('product-market fit')
     expect(detail.description).toContain('investor readiness frameworks')
   })
 
-  it('description is not pre-truncated beyond 800 chars', () => {
+  it('description is not pre-truncated — returns full scraped text', () => {
     const longText = 'a'.repeat(900)
     const $ = cheerio.load(`
-      <div class="cjbs-event">
+      <main>
         <div class="wp-block-group">
           <p>${longText}</p>
         </div>
-      </div>
+      </main>
     `)
     const detail = parseDetailPage($)
     expect(detail.description.length).toBe(900)
+  })
+
+  it('returns empty description when no main element exists', () => {
+    const $ = cheerio.load(`
+      <div class="wp-block-group">
+        <p>Content not inside main — should not be captured.</p>
+      </div>
+    `)
+    const detail = parseDetailPage($)
+    expect(detail.description).toBe('')
   })
 })
 
@@ -194,12 +201,16 @@ describe('parseAcEventListings', () => {
 })
 
 describe('assembleDescription', () => {
-  it('returns detailDescription for non-AC events', () => {
-    expect(assembleDescription('Detail text here.', 'API excerpt', false, '', new Map())).toBe('Detail text here.')
+  it('combines excerpt and detail for non-AC events', () => {
+    expect(assembleDescription('Detail text here.', 'API excerpt', false, '', new Map())).toBe('API excerpt Detail text here.')
   })
 
   it('falls back to excerpt for non-AC events when detail is empty', () => {
     expect(assembleDescription('', 'API excerpt fallback', false, '', new Map())).toBe('API excerpt fallback')
+  })
+
+  it('returns detailDescription for non-AC events when excerpt is empty', () => {
+    expect(assembleDescription('Some detail text here.', '', false, '', new Map())).toBe('Some detail text here.')
   })
 
   it('prepends AC excerpt to detail description for AC events', () => {
@@ -220,6 +231,11 @@ describe('assembleDescription', () => {
   it('truncates the combined result to 800 chars', () => {
     const map = new Map([['ev', 'x'.repeat(200)]])
     const result = assembleDescription('y'.repeat(700), '', true, 'ev', map)
+    expect(result.length).toBe(800)
+  })
+
+  it('truncates combined excerpt+detail to 800 chars for non-AC events', () => {
+    const result = assembleDescription('y'.repeat(700), 'x'.repeat(200), false, '', new Map())
     expect(result.length).toBe(800)
   })
 })
