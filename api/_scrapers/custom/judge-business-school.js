@@ -73,6 +73,17 @@ export function parseAcEventListings($) {
   return map
 }
 
+export function assembleDescription(detailDescription, excerpt, isAccelerateCambridge, eventTitle, acMap) {
+  if (isAccelerateCambridge) {
+    const acExcerpt = acMap.get(eventTitle.toLowerCase()) || ''
+    if (acExcerpt && detailDescription) {
+      return (acExcerpt + ' ' + detailDescription).slice(0, 800)
+    }
+    return (acExcerpt || detailDescription || excerpt).slice(0, 800)
+  }
+  return (detailDescription || excerpt).slice(0, 800)
+}
+
 export async function scrapeJudgeBusinessSchool() {
   log.info(SOURCE, 'starting scrape')
 

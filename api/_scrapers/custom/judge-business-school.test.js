@@ -4,7 +4,7 @@ import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import * as cheerio from 'cheerio'
-import { filterAndParseApiEvents, parseDetailPage, parseAcEventListings } from './judge-business-school.js'
+import { filterAndParseApiEvents, parseDetailPage, parseAcEventListings, assembleDescription } from './judge-business-school.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const apiFixture = JSON.parse(
@@ -190,5 +190,36 @@ describe('parseAcEventListings', () => {
   it('returns empty map when page has no b06Box cards', () => {
     const $ = cheerio.load('<div>Nothing here</div>')
     expect(parseAcEventListings($).size).toBe(0)
+  })
+})
+
+describe('assembleDescription', () => {
+  it('returns detailDescription for non-AC events', () => {
+    expect(assembleDescription('Detail text here.', 'API excerpt', false, '', new Map())).toBe('Detail text here.')
+  })
+
+  it('falls back to excerpt for non-AC events when detail is empty', () => {
+    expect(assembleDescription('', 'API excerpt fallback', false, '', new Map())).toBe('API excerpt fallback')
+  })
+
+  it('prepends AC excerpt to detail description for AC events', () => {
+    const map = new Map([['my event', 'AC programme excerpt.']])
+    const result = assembleDescription('Full detail text here.', 'API excerpt', true, 'My Event', map)
+    expect(result).toBe('AC programme excerpt. Full detail text here.')
+  })
+
+  it('uses AC excerpt alone when detail is empty for AC events', () => {
+    const map = new Map([['my event', 'AC excerpt only.']])
+    expect(assembleDescription('', 'API excerpt', true, 'My Event', map)).toBe('AC excerpt only.')
+  })
+
+  it('falls back to API excerpt for AC events when AC map has no match', () => {
+    expect(assembleDescription('', 'API excerpt fallback', true, 'Unknown Event', new Map())).toBe('API excerpt fallback')
+  })
+
+  it('truncates the combined result to 800 chars', () => {
+    const map = new Map([['ev', 'x'.repeat(200)]])
+    const result = assembleDescription('y'.repeat(700), '', true, 'ev', map)
+    expect(result.length).toBe(800)
   })
 })
