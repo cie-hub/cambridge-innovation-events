@@ -11,51 +11,67 @@ function extractTime(text) {
   return match ? match[1] : null
 }
 
+const DATE_RE = /(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+\d{1,2}\s+\w+/i
+
 export function parseCrukLectures($) {
   const events = []
   const divs = $('div[style*="padding-left"]').toArray()
 
-  let i = 0
-  while (i < divs.length) {
-    const text = $(divs[i]).text().trim()
-    const dateMatch = text.match(/(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+\d{1,2}\s+\w+/i)
+  const dateIndices = divs.reduce((acc, el, i) => {
+    if (DATE_RE.test($(el).text().trim().slice(0, 30))) acc.push(i)
+    return acc
+  }, [])
 
-    if (dateMatch) {
-      const date = parseDayMonthInfer(dateMatch[0])
-      const time = extractTime(text)
-      if (!date) { i++; continue }
+  for (let d = 0; d < dateIndices.length; d++) {
+    const dateIdx = dateIndices[d]
+    const nextDateIdx = dateIndices[d + 1] ?? divs.length
 
-      let speaker = ''
-      let lectureTitle = ''
+    const dateText = $(divs[dateIdx]).text().trim()
+    const dateMatch = dateText.match(DATE_RE)
+    const date = parseDayMonthInfer(dateMatch[0])
+    if (!date) continue
 
-      // Next divs should be speaker and title
-      if (i + 1 < divs.length) {
-        speaker = $(divs[i + 1]).text().trim()
-      }
-      if (i + 2 < divs.length) {
-        const titleEl = $(divs[i + 2])
-        lectureTitle = titleEl.find('em, strong').text().trim() || titleEl.text().trim()
-      }
+    const time = extractTime(dateText)
+    const block = divs.slice(dateIdx + 1, nextDateIdx)
 
-      if (lectureTitle) {
-        events.push(
-          normalizeEvent({
-            title: lectureTitle,
-            description: speaker ? `Speaker: ${speaker}` : '',
-            date,
-            source: SOURCE,
-            sourceUrl: EVENTS_URL,
-            location: LOCATION,
-            time,
-            categories: ['Healthcare', 'Research'],
-            cost: 'Free',
-          })
-        )
-        i += 3
-        continue
+    const titleEl = block.find(el => $(el).find('em, strong').length > 0)
+
+    let lectureTitle = ''
+    let speaker = ''
+
+    if (titleEl) {
+      lectureTitle = $(titleEl).find('em, strong').text().trim()
+      const otherTexts = block
+        .filter(el => el !== titleEl)
+        .map(el => $(el).text().trim())
+        .filter(Boolean)
+      speaker = otherTexts[0] || ''
+    } else {
+      for (const el of block) {
+        const fullText = $(el).text().trim()
+        if (!lectureTitle && fullText.length > 20) {
+          lectureTitle = fullText
+        } else if (!speaker && fullText.length > 0) {
+          speaker = fullText
+        }
       }
     }
-    i++
+
+    if (!lectureTitle) continue
+
+    events.push(
+      normalizeEvent({
+        title: lectureTitle,
+        description: speaker ? `Speaker: ${speaker}` : '',
+        date,
+        source: SOURCE,
+        sourceUrl: EVENTS_URL,
+        location: LOCATION,
+        time,
+        categories: ['Healthcare', 'Research'],
+        cost: 'Free',
+      })
+    )
   }
 
   return events
