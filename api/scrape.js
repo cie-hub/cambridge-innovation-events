@@ -96,6 +96,8 @@ export function buildScrapeHandler({ getAllSourceIds }) {
   }
 }
 
+export const config = { maxDuration: 60 }
+
 export default buildScrapeHandler({
   getAllSourceIds: () => Object.values(batches).flat(),
 })
