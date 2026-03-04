@@ -32,3 +32,17 @@ export function parseListingHtml(html) {
 
   return [...seen.values()]
 }
+
+export function parseDetailPage($) {
+  const time = $('td.time').first().text().trim() || null
+  const location = $('td.location').first().text().trim() || null
+
+  const descParts = []
+  $('.tabs-content.contentArea').first().find('p, h3').each((_i, el) => {
+    const text = $(el).text().trim()
+    if (text.length > 10) descParts.push(text)
+  })
+  const description = descParts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 800)
+
+  return { time, location, description }
+}

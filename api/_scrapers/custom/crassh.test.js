@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest'
-import { parseListingHtml } from './crassh.js'
+import { parseListingHtml, parseDetailPage } from './crassh.js'
 
 const SAMPLE_HTML = `
 <div class="events-item" id="event-50260-1" data-date="1772582400">
@@ -62,5 +62,73 @@ describe('parseListingHtml', () => {
 
   it('returns empty array for empty HTML', () => {
     expect(parseListingHtml('')).toEqual([])
+  })
+})
+
+import * as cheerio from 'cheerio'
+
+describe('parseDetailPage', () => {
+  it('extracts time, location, and description from detail page', () => {
+    const $ = cheerio.load(`
+      <article class="page-article pagebuilder">
+        <table class="table table--dates">
+          <tbody>
+            <tr>
+              <td class="date">4 Mar 2026</td>
+              <td class="time">17:30 - 19:00</td>
+              <td class="location" colspan="2">Trinity Hall Lecture Theatre, Trinity Lane, CB2 1TJ</td>
+            </tr>
+          </tbody>
+        </table>
+        <section class="tabs">
+          <div class="tabs-content tabs-content--current contentArea" id="tab-1">
+            <h2 class="tabs-subheading">Description</h2>
+            <p>This talk will explore the dramatic economic experiment unfolding in Argentina.</p>
+            <h3>About the speaker</h3>
+            <p>Dr Irene Mia is Senior Fellow at the International Institute for Strategic Studies.</p>
+          </div>
+        </section>
+      </article>
+    `)
+    const detail = parseDetailPage($)
+    expect(detail.time).toBe('17:30 - 19:00')
+    expect(detail.location).toBe('Trinity Hall Lecture Theatre, Trinity Lane, CB2 1TJ')
+    expect(detail.description).toContain('dramatic economic experiment')
+    expect(detail.description).toContain('Dr Irene Mia')
+  })
+
+  it('returns null for missing time and location', () => {
+    const $ = cheerio.load(`
+      <article class="page-article pagebuilder">
+        <table class="table table--dates">
+          <tbody><tr><td class="date">4 Mar 2026</td></tr></tbody>
+        </table>
+        <section class="tabs">
+          <div class="tabs-content tabs-content--current contentArea" id="tab-1">
+            <p>Short event description text here for the test.</p>
+          </div>
+        </section>
+      </article>
+    `)
+    const detail = parseDetailPage($)
+    expect(detail.time).toBeNull()
+    expect(detail.location).toBeNull()
+    expect(detail.description).toContain('Short event description')
+  })
+
+  it('truncates description to 800 chars', () => {
+    const longText = 'a'.repeat(1000)
+    const $ = cheerio.load(`
+      <article class="page-article pagebuilder">
+        <table class="table table--dates"><tbody><tr><td class="date">4 Mar 2026</td></tr></tbody></table>
+        <section class="tabs">
+          <div class="tabs-content tabs-content--current contentArea" id="tab-1">
+            <p>${longText}</p>
+          </div>
+        </section>
+      </article>
+    `)
+    const detail = parseDetailPage($)
+    expect(detail.description.length).toBe(800)
   })
 })
