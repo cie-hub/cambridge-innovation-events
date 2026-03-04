@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import { normalizeEvent, fetchPage } from '../_shared/utils.js'
+import { normalizeEvent } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
 
 const SOURCE = 'crassh'
@@ -77,9 +77,22 @@ export async function scrapeCrassh() {
 
   log.info(SOURCE, 'fetched listings', { count: allListings.length })
 
+  const DEFAULT_LOCATION = 'CRASSH, Alison Richard Building, 7 West Road, Cambridge'
+
   const events = await Promise.all(allListings.map(async (listing) => {
-    const $ = await fetchPage(listing.sourceUrl)
-    const detail = parseDetailPage($)
+    let detail = { time: null, location: null, description: '' }
+    try {
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), 5000)
+      const res = await fetch(listing.sourceUrl, {
+        headers: { 'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)' },
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timer))
+      const html = await res.text()
+      detail = parseDetailPage(cheerio.load(html))
+    } catch (err) {
+      log.warn(SOURCE, `detail page failed for ${listing.sourceUrl}: ${err.message}`)
+    }
     return normalizeEvent({
       title: listing.title,
       description: detail.description,
@@ -87,7 +100,7 @@ export async function scrapeCrassh() {
       source: SOURCE,
       sourceUrl: listing.sourceUrl,
       time: detail.time,
-      location: detail.location || 'CRASSH, Alison Richard Building, 7 West Road, Cambridge',
+      location: detail.location || DEFAULT_LOCATION,
       imageUrl: listing.imageUrl,
       access: 'Public',
     })
