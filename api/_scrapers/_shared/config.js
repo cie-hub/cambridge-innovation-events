@@ -10,7 +10,8 @@ export const batches = {
   4: ['luma-cffn', 'luma-cue', 'luma-cament'],
   5: ['talks-cam', 'cruk-lectures', 'eventbrite-cambridge', 'makespace', 'cam-public-events'],
   6: ['ifm-events', 'cambridge-enterprise', 'wolfson-college', 'history-economics', 'maxwell-centre'],
-  7: ['meetup-cambridge', 'crassh'],
+  7: ['meetup-cambridge'],
+  8: ['crassh'],
 }
 
 /**
