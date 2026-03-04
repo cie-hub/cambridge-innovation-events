@@ -1,26 +1,16 @@
 import { normalizeEvent } from '../_shared/utils.js'
 import { log } from '../_shared/log.js'
 
-
-const EVENTS_URL = 'https://www.eventbrite.co.uk/d/united-kingdom--cambridge/innovation/'
+const SEARCH_URLS = [
+  'https://www.eventbrite.co.uk/d/united-kingdom--cambridge/innovation/',
+  'https://www.eventbrite.co.uk/d/united-kingdom--cambridge/business-networking/',
+]
 const SOURCE = 'eventbrite-cambridge'
 
-export async function scrapeEventbriteCambridge() {
-  log.info(SOURCE, 'starting scrape')
-  const res = await fetch(EVENTS_URL, {
-    headers: {
-      'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)',
-    },
-  })
-  if (!res.ok) {
-    throw new Error(`Failed to fetch Eventbrite: ${res.status}`)
-  }
-  const html = await res.text()
-
-  // Extract __SERVER_DATA__ JSON via brace-counting (too large for regex)
+function parseServerData(html) {
   const marker = 'window.__SERVER_DATA__ = '
   const idx = html.indexOf(marker)
-  if (idx === -1) throw new Error('Eventbrite page missing __SERVER_DATA__ marker — page structure may have changed')
+  if (idx === -1) return null
 
   const start = idx + marker.length
   let depth = 0
@@ -30,33 +20,24 @@ export async function scrapeEventbriteCambridge() {
     else if (html[i] === '}') { depth--; if (depth === 0) { end = i + 1; break } }
   }
 
-  let serverData
-  try {
-    serverData = JSON.parse(html.slice(start, end))
-  } catch (err) {
-    log.error(SOURCE, 'Failed to parse __SERVER_DATA__ JSON', err)
-    return []
-  }
+  return JSON.parse(html.slice(start, end))
+}
 
-  const results = serverData?.search_data?.events?.results
-  if (!Array.isArray(results)) throw new Error('Eventbrite __SERVER_DATA__ schema changed — search_data.events.results is not an array')
-
+export function extractEvents(results) {
   const events = []
   for (const evt of results) {
     if (!evt.name || !evt.start_date) continue
 
-    const startDate = new Date(evt.start_date)
-    if (isNaN(startDate.getTime())) continue
-    const dateStr = startDate.toISOString().split('T')[0]
+    const city = evt.primary_venue?.address?.city || ''
+    if (!city.toLowerCase().includes('cambridge')) continue
+
+    const dateMatch = evt.start_date.match(/^(\d{4}-\d{2}-\d{2})/)
+    if (!dateMatch) continue
 
     let time = null
     if (evt.start_time && evt.end_time) {
       time = `${evt.start_time} - ${evt.end_time}`
     }
-
-    const location = evt.primary_venue?.name || evt.primary_venue?.address?.city || ''
-    const imageUrl = evt.image?.url || null
-    const sourceUrl = evt.url || `https://www.eventbrite.co.uk/e/${evt.id}`
 
     let cost = null
     if (evt.ticket_availability?.minimum_ticket_price?.major_value === '0' || evt.is_free) {
@@ -65,22 +46,66 @@ export async function scrapeEventbriteCambridge() {
       cost = evt.ticket_availability.minimum_ticket_price.display
     }
 
-    events.push(
-      normalizeEvent({
-        title: evt.name,
-        description: evt.summary || '',
-        date: dateStr,
-        source: SOURCE,
-        sourceUrl,
-        location,
-        time,
-        imageUrl,
-        cost,
-        access: 'Registration Required',
-        categories: ['Innovation'],
-      })
-    )
+    events.push({
+      id: evt.id,
+      title: evt.name,
+      description: evt.summary || '',
+      date: dateMatch[1],
+      time,
+      location: evt.primary_venue?.name || city,
+      city,
+      imageUrl: evt.image?.url || null,
+      sourceUrl: evt.url || `https://www.eventbrite.co.uk/e/${evt.id}`,
+      cost,
+    })
   }
+  return events
+}
+
+export function deduplicateById(events) {
+  const seen = new Map()
+  for (const evt of events) {
+    if (!seen.has(evt.id)) seen.set(evt.id, evt)
+  }
+  return [...seen.values()]
+}
+
+export async function scrapeEventbriteCambridge() {
+  log.info(SOURCE, 'starting scrape')
+
+  let allRaw = []
+  for (const url of SEARCH_URLS) {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)' },
+    })
+    if (!res.ok) {
+      log.warn(SOURCE, `Failed to fetch ${url}: ${res.status}`)
+      continue
+    }
+    const html = await res.text()
+    const serverData = parseServerData(html)
+    const results = serverData?.search_data?.events?.results
+    if (Array.isArray(results)) {
+      allRaw.push(...extractEvents(results))
+    }
+  }
+
+  const unique = deduplicateById(allRaw)
+  log.info(SOURCE, 'deduplicated events', { raw: allRaw.length, unique: unique.length })
+
+  const events = unique.map(evt => normalizeEvent({
+    title: evt.title,
+    description: evt.description,
+    date: evt.date,
+    source: SOURCE,
+    sourceUrl: evt.sourceUrl,
+    location: evt.location,
+    time: evt.time,
+    imageUrl: evt.imageUrl,
+    cost: evt.cost,
+    access: 'Registration Required',
+    categories: ['Innovation'],
+  }))
 
   log.info(SOURCE, 'scrape complete', { events: events.length })
   return events
