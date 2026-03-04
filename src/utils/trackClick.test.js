@@ -6,7 +6,7 @@ describe('trackClick', () => {
     vi.restoreAllMocks()
   })
 
-  it('calls sendBeacon with correct URL and payload', () => {
+  it('calls sendBeacon with correct URL and payload', async () => {
     const beacon = vi.fn(() => true)
     vi.stubGlobal('navigator', { sendBeacon: beacon })
 
@@ -14,9 +14,12 @@ describe('trackClick', () => {
 
     expect(beacon).toHaveBeenCalledWith(
       '/api/track',
-      expect.any(String)
+      expect.any(Blob)
     )
-    const payload = JSON.parse(beacon.mock.calls[0][1])
+    const blob = beacon.mock.calls[0][1]
+    expect(blob.type).toBe('application/json')
+    const text = await blob.text()
+    const payload = JSON.parse(text)
     expect(payload.eventId).toBe('507f1f77bcf86cd799439011')
   })
 
