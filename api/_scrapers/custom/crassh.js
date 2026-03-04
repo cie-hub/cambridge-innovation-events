@@ -1,8 +1,5 @@
 import * as cheerio from 'cheerio'
-import { normalizeEvent, fetchPage } from '../_shared/utils.js'
-import { log } from '../_shared/log.js'
 
-const AJAX_URL = 'https://www.crassh.cam.ac.uk/wp-admin/admin-ajax.php'
 const SOURCE = 'crassh'
 
 export function parseListingHtml(html) {
