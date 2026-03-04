@@ -23,6 +23,10 @@ export function buildScrapeHandler({ getAllSourceIds }) {
 
     await eventsCol.createIndex({ contentHash: 1 }, { sparse: true, background: true })
 
+    const clicksCol = db.collection('clicks')
+    await clicksCol.createIndex({ hash: 1 }, { background: true })
+    await clicksCol.createIndex({ timestamp: 1 }, { background: true })
+
     const results = {}
 
     for (const sourceId of sourceIds) {
