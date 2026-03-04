@@ -11,9 +11,12 @@ export default async function handler(req, res) {
     const db = await getDb()
     const oid = new ObjectId(eventId)
 
+    const event = await db.collection('events').findOne({ _id: oid }, { projection: { hash: 1 } })
+    if (!event) return res.status(404).end()
+
     await Promise.all([
       db.collection('events').updateOne({ _id: oid }, { $inc: { clicks: 1 } }),
-      db.collection('clicks').insertOne({ eventId: oid, timestamp: new Date() }),
+      db.collection('clicks').insertOne({ hash: event.hash, timestamp: new Date() }),
     ])
 
     return res.status(204).end()
