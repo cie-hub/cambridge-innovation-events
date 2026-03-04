@@ -29,7 +29,8 @@ export function extractEvents(results) {
     if (!evt.name || !evt.start_date) continue
 
     const city = evt.primary_venue?.address?.city || ''
-    if (!city.toLowerCase().includes('cambridge')) continue
+    const cityLower = city.toLowerCase()
+    if (!cityLower.includes('cambridge') && cityLower !== 'cherry hinton') continue
 
     const dateMatch = evt.start_date.match(/^(\d{4}-\d{2}-\d{2})/)
     if (!dateMatch) continue

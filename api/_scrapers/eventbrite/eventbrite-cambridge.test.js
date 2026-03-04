@@ -24,15 +24,17 @@ describe('extractEvents', () => {
     expect(events[0].city).toBe('Cambridge')
   })
 
-  it('filters out events not in Cambridge', () => {
+  it('filters out events not in Cambridge area', () => {
     const results = [
       { id: '1', name: 'Cambridge Event', start_date: '2026-03-11T00:00:00', primary_venue: { address: { city: 'Cambridge' } } },
       { id: '2', name: 'Stevenage Event', start_date: '2026-03-11T00:00:00', primary_venue: { address: { city: 'Stevenage' } } },
       { id: '3', name: 'No Venue Event', start_date: '2026-03-11T00:00:00' },
+      { id: '4', name: 'Cherry Hinton Event', start_date: '2026-03-11T00:00:00', primary_venue: { address: { city: 'Cherry Hinton' } } },
     ]
     const events = extractEvents(results)
-    expect(events).toHaveLength(1)
+    expect(events).toHaveLength(2)
     expect(events[0].title).toBe('Cambridge Event')
+    expect(events[1].title).toBe('Cherry Hinton Event')
   })
 
   it('skips events with missing name or start_date', () => {
