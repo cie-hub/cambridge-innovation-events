@@ -10,7 +10,7 @@ export const batches = {
   4: ['luma-cffn', 'luma-cue', 'luma-cament'],
   5: ['talks-cam', 'cruk-lectures', 'eventbrite-cambridge', 'makespace', 'cam-public-events'],
   6: ['ifm-events', 'cambridge-enterprise', 'wolfson-college', 'history-economics', 'maxwell-centre'],
-  7: ['meetup-cambridge'],
+  7: ['meetup-cambridge', 'crassh'],
 }
 
 /**
@@ -157,6 +157,11 @@ export const sources = {
     name: 'Maxwell Centre',
     url: 'https://www.maxwell.cam.ac.uk/events',
     description: 'Maxwell Centre research engagement workshops, debates, and science communication events',
+  },
+  'crassh': {
+    name: 'CRASSH',
+    url: 'https://www.crassh.cam.ac.uk/events/',
+    description: 'Centre for Research in the Arts, Social Sciences and Humanities — seminars, lectures, and workshops',
   },
 }
 

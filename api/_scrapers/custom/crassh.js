@@ -1,4 +1,6 @@
 import * as cheerio from 'cheerio'
+import { normalizeEvent, fetchPage } from '../_shared/utils.js'
+import { log } from '../_shared/log.js'
 
 const SOURCE = 'crassh'
 
@@ -45,4 +47,54 @@ export function parseDetailPage($) {
   const description = descParts.join(' ').replace(/\s+/g, ' ').trim().slice(0, 800)
 
   return { time, location, description }
+}
+
+const AJAX_URL = 'https://www.crassh.cam.ac.uk/wp-admin/admin-ajax.php'
+
+export async function scrapeCrassh() {
+  log.info(SOURCE, 'starting scrape')
+
+  let page = 1
+  let allListings = []
+
+  while (page) {
+    const res = await fetch(AJAX_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)',
+      },
+      body: `action=screen_events&args[page]=${page}&args[range]=all`,
+    })
+    if (!res.ok) throw new Error(`CRASSH AJAX failed: ${res.status}`)
+    const data = await res.json()
+
+    const listings = parseListingHtml(data.html || '')
+    allListings.push(...listings)
+
+    page = data.nextpage || null
+  }
+
+  log.info(SOURCE, 'fetched listings', { count: allListings.length })
+
+  const events = []
+  for (const listing of allListings) {
+    const $ = await fetchPage(listing.sourceUrl)
+    const detail = parseDetailPage($)
+
+    events.push(normalizeEvent({
+      title: listing.title,
+      description: detail.description,
+      date: listing.date,
+      source: SOURCE,
+      sourceUrl: listing.sourceUrl,
+      time: detail.time,
+      location: detail.location || 'CRASSH, Alison Richard Building, 7 West Road, Cambridge',
+      imageUrl: listing.imageUrl,
+      access: 'Public',
+    }))
+  }
+
+  log.info(SOURCE, 'scrape complete', { events: events.length })
+  return events.filter(Boolean)
 }
