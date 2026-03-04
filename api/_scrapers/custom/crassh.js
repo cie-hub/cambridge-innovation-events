@@ -77,12 +77,10 @@ export async function scrapeCrassh() {
 
   log.info(SOURCE, 'fetched listings', { count: allListings.length })
 
-  const events = []
-  for (const listing of allListings) {
+  const events = await Promise.all(allListings.map(async (listing) => {
     const $ = await fetchPage(listing.sourceUrl)
     const detail = parseDetailPage($)
-
-    events.push(normalizeEvent({
+    return normalizeEvent({
       title: listing.title,
       description: detail.description,
       date: listing.date,
@@ -92,9 +90,9 @@ export async function scrapeCrassh() {
       location: detail.location || 'CRASSH, Alison Richard Building, 7 West Road, Cambridge',
       imageUrl: listing.imageUrl,
       access: 'Public',
-    }))
-  }
+    })
+  }))
 
-  log.info(SOURCE, 'scrape complete', { events: events.length })
+  log.info(SOURCE, 'scrape complete', { events: events.filter(Boolean).length })
   return events.filter(Boolean)
 }
