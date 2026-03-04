@@ -55,7 +55,7 @@ export async function scrapeCrassh() {
   log.info(SOURCE, 'starting scrape')
 
   let page = 1
-  let allListings = []
+  const allListings = []
 
   while (page) {
     const res = await fetch(AJAX_URL, {

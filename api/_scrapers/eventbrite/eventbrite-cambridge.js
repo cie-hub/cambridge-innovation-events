@@ -73,20 +73,28 @@ export function deduplicateById(events) {
 export async function scrapeEventbriteCambridge() {
   log.info(SOURCE, 'starting scrape')
 
-  let allRaw = []
+  const allRaw = []
   for (const url of SEARCH_URLS) {
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)' },
-    })
-    if (!res.ok) {
-      log.warn(SOURCE, `Failed to fetch ${url}: ${res.status}`)
-      continue
-    }
-    const html = await res.text()
-    const serverData = parseServerData(html)
-    const results = serverData?.search_data?.events?.results
-    if (Array.isArray(results)) {
-      allRaw.push(...extractEvents(results))
+    try {
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)' },
+      })
+      if (!res.ok) {
+        log.warn(SOURCE, `Failed to fetch ${url}: ${res.status}`)
+        continue
+      }
+      const html = await res.text()
+      const serverData = parseServerData(html)
+      if (!serverData) {
+        log.warn(SOURCE, `No __SERVER_DATA__ found on ${url}`)
+        continue
+      }
+      const results = serverData?.search_data?.events?.results
+      if (Array.isArray(results)) {
+        allRaw.push(...extractEvents(results))
+      }
+    } catch (err) {
+      log.warn(SOURCE, `Error processing ${url}: ${err.message}`)
     }
   }
 
