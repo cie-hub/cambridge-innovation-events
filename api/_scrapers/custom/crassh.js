@@ -54,17 +54,18 @@ const AJAX_URL = 'https://www.crassh.cam.ac.uk/wp-admin/admin-ajax.php'
 export async function scrapeCrassh() {
   log.info(SOURCE, 'starting scrape')
 
+  const MAX_PAGES = 3
   let page = 1
   const allListings = []
 
-  while (page) {
+  while (page && page <= MAX_PAGES) {
     const res = await fetch(AJAX_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'User-Agent': 'CambridgeInnovationEvents/1.0 (community aggregator)',
       },
-      body: `action=screen_events&args[page]=${page}&args[range]=all`,
+      body: `action=screen_events&args[page]=${page}&args[range]=future`,
     })
     if (!res.ok) throw new Error(`CRASSH AJAX failed: ${res.status}`)
     const data = await res.json()
